@@ -12,10 +12,9 @@ class MainMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final baseTheme = Theme.of(context);
-    final textTheme = GoogleFonts.unboundedTextTheme(baseTheme.textTheme).apply(
-      bodyColor: Colors.white,
-      displayColor: Colors.white,
-    );
+    final textTheme = GoogleFonts.unboundedTextTheme(
+      baseTheme.textTheme,
+    ).apply(bodyColor: Colors.white, displayColor: Colors.white);
 
     return Theme(
       data: baseTheme.copyWith(textTheme: textTheme),
@@ -36,8 +35,8 @@ class MainMenuScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.black.withOpacity(0.55),
-                      Colors.black.withOpacity(0.50),
+                      Colors.black.withValues(alpha: 0.55),
+                      Colors.black.withValues(alpha: 0.50),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -46,25 +45,35 @@ class MainMenuScreen extends StatelessWidget {
               ),
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 20,
+                  ),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final double carHeight = constraints.maxHeight * 0.55;
                       return SingleChildScrollView(
                         child: ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
+                          ),
                           child: Stack(
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _TopBar(),
-                                  SizedBox(height: constraints.maxHeight * 0.05),
+                                  SizedBox(
+                                    height: constraints.maxHeight * 0.05,
+                                  ),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Expanded(child: SizedBox()),
-                                      SizedBox(width: constraints.maxWidth * 0.02),
+                                      SizedBox(
+                                        width: constraints.maxWidth * 0.02,
+                                      ),
                                       SizedBox(
                                         width: constraints.maxWidth * 0.35,
                                         child: _MenuButtons(
@@ -119,10 +128,10 @@ class _TopBar extends StatelessWidget {
           child: Text(
             'MAIN MENU',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
+              fontSize: 36,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
         Flexible(
@@ -171,12 +180,12 @@ class _TokenChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: background.withOpacity(0.95),
+        color: background.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xFF0F6BB7), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -194,9 +203,9 @@ class _TokenChip extends StatelessWidget {
           Text(
             value,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                ),
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(width: 12),
           const Icon(Icons.add, color: Colors.white, size: 28),
@@ -217,12 +226,12 @@ class _BorderedIconButton extends StatelessWidget {
       width: 70,
       height: 70,
       decoration: BoxDecoration(
-        color: const Color(0xFF222447).withOpacity(0.9),
+        color: const Color(0xFF222447).withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: const Color(0xFF0F6BB7), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -237,10 +246,7 @@ class _MenuButtons extends StatelessWidget {
   final VoidCallback onAccount;
   final VoidCallback onGoRace;
 
-  const _MenuButtons({
-    required this.onAccount,
-    required this.onGoRace,
-  });
+  const _MenuButtons({required this.onAccount, required this.onGoRace});
 
   @override
   Widget build(BuildContext context) {
@@ -253,11 +259,7 @@ class _MenuButtons extends StatelessWidget {
         const SizedBox(height: 18),
         _NavButton(text: 'Account', onTap: onAccount),
         const SizedBox(height: 24),
-        _NavButton(
-          text: 'GO RACE!',
-          onTap: onGoRace,
-          isPrimary: true,
-        ),
+        _NavButton(text: 'GO RACE!', onTap: onGoRace, isPrimary: true),
       ],
     );
   }
@@ -291,12 +293,12 @@ class _NavButton extends StatelessWidget {
                   end: Alignment.bottomRight,
                 )
               : null,
-          color: isPrimary ? null : baseColor.withOpacity(0.92),
+          color: isPrimary ? null : baseColor.withValues(alpha: 0.92),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: borderColor, width: 2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withValues(alpha: 0.25),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -306,10 +308,10 @@ class _NavButton extends StatelessWidget {
           child: Text(
             text,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.2,
-                ),
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.2,
+            ),
           ),
         ),
       ),

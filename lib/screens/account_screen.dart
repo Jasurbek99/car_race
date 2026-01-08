@@ -8,10 +8,9 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themedText = GoogleFonts.unboundedTextTheme(Theme.of(context).textTheme).apply(
-      bodyColor: Colors.white,
-      displayColor: Colors.white,
-    );
+    final themedText = GoogleFonts.unboundedTextTheme(
+      Theme.of(context).textTheme,
+    ).apply(bodyColor: Colors.white, displayColor: Colors.white);
 
     return Theme(
       data: Theme.of(context).copyWith(textTheme: themedText),
@@ -31,8 +30,8 @@ class AccountScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.45),
-                  Colors.black.withOpacity(0.65),
+                  Colors.black.withValues(alpha: 0.45),
+                  Colors.black.withValues(alpha: 0.65),
                 ],
               ),
             ),
@@ -41,7 +40,9 @@ class AccountScreen extends StatelessWidget {
                 builder: (context, constraints) {
                   return SingleChildScrollView(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(24),
                         child: Column(
@@ -84,10 +85,10 @@ class _TopBar extends StatelessWidget {
           child: Text(
             'Account',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.2,
-                ),
+              fontSize: 34,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
+            ),
           ),
         ),
         Flexible(
@@ -136,12 +137,12 @@ class _TokenChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: background.withOpacity(0.95),
+        color: background.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xFF0F6BB7), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -159,9 +160,9 @@ class _TokenChip extends StatelessWidget {
           Text(
             value,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                ),
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(width: 12),
           const Icon(Icons.add, color: Colors.white, size: 28),
@@ -182,12 +183,12 @@ class _BorderedIconButton extends StatelessWidget {
       width: 70,
       height: 70,
       decoration: BoxDecoration(
-        color: const Color(0xFF222447).withOpacity(0.9),
+        color: const Color(0xFF222447).withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: const Color(0xFF0F6BB7), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -226,17 +227,19 @@ class _NavPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color baseColor = isActive ? const Color(0xFF5C5BD6) : const Color(0xFF26263D);
+    final Color baseColor = isActive
+        ? const Color(0xFF5C5BD6)
+        : const Color(0xFF26263D);
     return Container(
       width: 320,
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
       decoration: BoxDecoration(
-        color: baseColor.withOpacity(0.92),
+        color: baseColor.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xFF0F6BB7), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 14,
             offset: const Offset(0, 8),
           ),
@@ -245,10 +248,10 @@ class _NavPill extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.2,
-            ),
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.2,
+        ),
       ),
     );
   }
@@ -262,12 +265,12 @@ class _FriendsPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: const Color(0xFF26263D).withOpacity(0.95),
+        color: const Color(0xFF26263D).withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: const Color(0xFF0F6BB7), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.35),
+            color: Colors.black.withValues(alpha: 0.35),
             blurRadius: 18,
             offset: const Offset(0, 12),
           ),
@@ -279,17 +282,11 @@ class _FriendsPanel extends StatelessWidget {
           Row(
             children: const [
               Expanded(
-                child: _TabPill(
-                  text: 'List of friends',
-                  isActive: true,
-                ),
+                child: _TabPill(text: 'List of friends', isActive: true),
               ),
               SizedBox(width: 16),
               Expanded(
-                child: _TabPill(
-                  text: 'Search friends',
-                  isActive: false,
-                ),
+                child: _TabPill(text: 'Search friends', isActive: false),
               ),
             ],
           ),
@@ -336,9 +333,9 @@ class _TabPill extends StatelessWidget {
         child: Text(
           text,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-              ),
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -359,19 +356,19 @@ class _InfoRow extends StatelessWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 24,
-                color: const Color(0xFFBDBCC9),
-                fontWeight: FontWeight.w600,
-              ),
+            fontSize: 24,
+            color: const Color(0xFFBDBCC9),
+            fontWeight: FontWeight.w600,
+          ),
         ),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.right,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w700,
-                ),
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ],
