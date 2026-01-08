@@ -6,13 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../components/car.dart';
 
+import 'race_hud_controller.dart';
+
 enum GameState { ready, racing, finished }
 
 class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
+  RaceGame({this.hudController, this.showDebugText = false});
+
   late Car playerCar;
   late Car aiCar;
 
   GameState gameState = GameState.ready;
+  final RaceHudController? hudController;
+  final bool showDebugText;
 
   double finishLineX = 0; // Will be set in onLoad
   String? winner;
@@ -24,14 +30,15 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late RectangleComponent finishLine;
 
   // UI
-  late TextComponent distanceText;
-  late TextComponent speedText;
-  late TextComponent gearText;
-  late TextComponent countdownText;
-  late TextComponent winnerText;
+  TextComponent? distanceText;
+  TextComponent? speedText;
+  TextComponent? gearText;
+  TextComponent? countdownText;
+  TextComponent? winnerText;
 
   double countdownTimer = 3;
   bool countdownComplete = false;
+  bool _goClearScheduled = false;
 
   // Background scroll
   double roadOffset = 0;
@@ -39,17 +46,21 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
   @override
   Future<void> onLoad() async {
     // Set up sky background
-    add(RectangleComponent(
-      size: size,
-      paint: Paint()..color = const Color(0xFF87CEEB),
-    ));
+    add(
+      RectangleComponent(
+        size: size,
+        paint: Paint()..color = const Color(0xFF87CEEB),
+      ),
+    );
 
     // Ground
-    add(RectangleComponent(
-      position: Vector2(0, size.y * 0.7),
-      size: Vector2(size.x, size.y * 0.3),
-      paint: Paint()..color = const Color(0xFF228B22),
-    ));
+    add(
+      RectangleComponent(
+        position: Vector2(0, size.y * 0.7),
+        size: Vector2(size.x, size.y * 0.3),
+        paint: Paint()..color = const Color(0xFF228B22),
+      ),
+    );
 
     // Road
     road = RectangleComponent(
@@ -91,11 +102,13 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // Add checkered pattern to finish line
     for (int i = 0; i < 7; i++) {
-      add(RectangleComponent(
-        position: Vector2(finishLineX, size.y * 0.45 + (i * size.y * 0.05)),
-        size: Vector2(10, size.y * 0.025),
-        paint: Paint()..color = i.isEven ? Colors.black : Colors.white,
-      ));
+      add(
+        RectangleComponent(
+          position: Vector2(finishLineX, size.y * 0.45 + (i * size.y * 0.05)),
+          size: Vector2(10, size.y * 0.025),
+          paint: Paint()..color = i.isEven ? Colors.black : Colors.white,
+        ),
+      );
     }
 
     // Car sizes
@@ -121,73 +134,81 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     );
     add(aiCar);
 
-    // UI elements
-    distanceText = TextComponent(
-      text: 'RACE TO THE FINISH!',
-      position: Vector2(20, 20),
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+    hudController?.value = hudController!.value.copyWith(
+      gear: playerCar.getCurrentGear(),
+      maxGears: playerCar.maxGears,
     );
-    add(distanceText);
 
-    speedText = TextComponent(
-      text: 'Speed: 0 km/h',
-      position: Vector2(20, 50),
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+    if (showDebugText) {
+      distanceText = TextComponent(
+        text: 'RACE TO THE FINISH!',
+        position: Vector2(20, 20),
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-    );
-    add(speedText);
+      );
+      add(distanceText!);
 
-    gearText = TextComponent(
-      text: 'Gear: 1/5',
-      position: Vector2(size.x - 120, 20),
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
+      speedText = TextComponent(
+        text: 'Speed: 0 km/h',
+        position: Vector2(20, 50),
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-    );
-    add(gearText);
+      );
+      add(speedText!);
 
-    countdownText = TextComponent(
-      text: 'TAP TO START',
-      position: Vector2(size.x / 2, size.y / 3),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Colors.red,
-          fontSize: 48,
-          fontWeight: FontWeight.bold,
+      gearText = TextComponent(
+        text: 'Gear: 1/5',
+        position: Vector2(size.x - 120, 20),
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-    );
-    add(countdownText);
+      );
+      add(gearText!);
 
-    winnerText = TextComponent(
-      text: '',
-      position: Vector2(size.x / 2, size.y / 2.5),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Colors.green,
-          fontSize: 36,
-          fontWeight: FontWeight.bold,
+      countdownText = TextComponent(
+        text: hudController?.value.countdownText ?? 'TAP TO START',
+        position: Vector2(size.x / 2, size.y / 3),
+        anchor: Anchor.center,
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-    );
-    add(winnerText);
+      );
+      add(countdownText!);
+
+      winnerText = TextComponent(
+        text: '',
+        position: Vector2(size.x / 2, size.y / 2.5),
+        anchor: Anchor.center,
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+      add(winnerText!);
+    }
+  }
+
+  void _emitHud(RaceHudState next) {
+    final controller = hudController;
+    if (controller == null) return;
+    if (controller.value == next) return;
+    controller.value = next;
   }
 
   @override
@@ -197,18 +218,32 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     if (gameState == GameState.racing) {
       if (!countdownComplete) {
         countdownTimer -= dt;
+        final controller = hudController;
+        final currentHud = controller?.value;
         if (countdownTimer > 0) {
-          countdownText.text = countdownTimer.ceil().toString();
+          final label = countdownTimer.ceil().toString();
+          if (currentHud != null) {
+            _emitHud(currentHud.copyWith(countdownText: label));
+          }
+          countdownText?.text = label;
         } else {
-          countdownText.text = 'GO!';
+          if (currentHud != null) {
+            _emitHud(currentHud.copyWith(countdownText: 'GO!'));
+          }
+          countdownText?.text = 'GO!';
           countdownComplete = true;
         }
         return;
       }
 
-      if (countdownText.text == 'GO!') {
+      if (!_goClearScheduled && hudController?.value.countdownText == 'GO!') {
+        _goClearScheduled = true;
         Future.delayed(const Duration(milliseconds: 500), () {
-          countdownText.text = '';
+          final controller = hudController;
+          if (controller != null && controller.value.countdownText == 'GO!') {
+            controller.value = controller.value.copyWith(countdownText: '');
+          }
+          countdownText?.text = '';
         });
       }
 
@@ -236,56 +271,88 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
       }
 
       // Update UI
-      final playerProgress = ((playerCar.position.x / finishLineX) * 100).clamp(0, 100).toInt();
-      final aiProgress = ((aiCar.position.x / finishLineX) * 100).clamp(0, 100).toInt();
-      distanceText.text = 'You: $playerProgress% | AI: $aiProgress%';
-      speedText.text = 'Speed: ${(playerCar.speed * 3.6).toInt()} km/h';
-      gearText.text = 'Gear: ${playerCar.getCurrentGear()}/${playerCar.maxGears}';
+      final playerProgress = ((playerCar.position.x / finishLineX) * 100)
+          .clamp(0, 100)
+          .toInt();
+      final aiProgress = ((aiCar.position.x / finishLineX) * 100)
+          .clamp(0, 100)
+          .toInt();
+      final speedKmh = (playerCar.speed * 3.6).toInt();
+      final gear = playerCar.getCurrentGear();
+
+      final controller = hudController;
+      if (controller != null) {
+        _emitHud(
+          controller.value.copyWith(
+            playerProgressPercent: playerProgress,
+            aiProgressPercent: aiProgress,
+            speedKmh: speedKmh,
+            gear: gear,
+            maxGears: playerCar.maxGears,
+          ),
+        );
+      }
+
+      distanceText?.text = 'You: $playerProgress% | AI: $aiProgress%';
+      speedText?.text = 'Speed: $speedKmh km/h';
+      gearText?.text = 'Gear: $gear/${playerCar.maxGears}';
 
       // Check for winner - first car to reach finish line wins
-      if (playerCar.position.x >= finishLineX && aiCar.position.x < finishLineX) {
+      if (playerCar.position.x >= finishLineX &&
+          aiCar.position.x < finishLineX) {
         gameState = GameState.finished;
         winner = 'YOU WIN!';
-        winnerText.text = winner!;
-        winnerText.textRenderer = TextPaint(
-          style: const TextStyle(
-            color: Colors.green,
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-        countdownText.text = 'TAP TO RESTART';
+        winnerText?.text = winner!;
+        countdownText?.text = 'TAP TO RESTART';
         playerCar.brake();
         aiCar.brake();
-      } else if (aiCar.position.x >= finishLineX && playerCar.position.x < finishLineX) {
+        final controller = hudController;
+        if (controller != null) {
+          _emitHud(
+            controller.value.copyWith(
+              gameState: gameState,
+              winnerText: winner!,
+              countdownText: 'TAP TO RESTART',
+            ),
+          );
+        }
+      } else if (aiCar.position.x >= finishLineX &&
+          playerCar.position.x < finishLineX) {
         gameState = GameState.finished;
         winner = 'AI WINS!';
-        winnerText.text = winner!;
-        winnerText.textRenderer = TextPaint(
-          style: const TextStyle(
-            color: Colors.red,
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-        countdownText.text = 'TAP TO RESTART';
+        winnerText?.text = winner!;
+        countdownText?.text = 'TAP TO RESTART';
         playerCar.brake();
         aiCar.brake();
-      } else if (playerCar.position.x >= finishLineX && aiCar.position.x >= finishLineX) {
+        final controller = hudController;
+        if (controller != null) {
+          _emitHud(
+            controller.value.copyWith(
+              gameState: gameState,
+              winnerText: winner!,
+              countdownText: 'TAP TO RESTART',
+            ),
+          );
+        }
+      } else if (playerCar.position.x >= finishLineX &&
+          aiCar.position.x >= finishLineX) {
         // Both crossed at the same time - it's a tie!
         gameState = GameState.finished;
         winner = 'TIE!';
-        winnerText.text = winner!;
-        winnerText.textRenderer = TextPaint(
-          style: const TextStyle(
-            color: Colors.orange,
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
-        );
-        countdownText.text = 'TAP TO RESTART';
+        winnerText?.text = winner!;
+        countdownText?.text = 'TAP TO RESTART';
         playerCar.brake();
         aiCar.brake();
+        final controller = hudController;
+        if (controller != null) {
+          _emitHud(
+            controller.value.copyWith(
+              gameState: gameState,
+              winnerText: winner!,
+              countdownText: 'TAP TO RESTART',
+            ),
+          );
+        }
       }
     }
   }
@@ -296,6 +363,17 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
       gameState = GameState.racing;
       countdownTimer = 3;
       countdownComplete = false;
+      _goClearScheduled = false;
+      final controller = hudController;
+      if (controller != null) {
+        _emitHud(
+          controller.value.copyWith(
+            gameState: gameState,
+            countdownText: '3',
+            winnerText: '',
+          ),
+        );
+      }
     } else if (gameState == GameState.racing && countdownComplete) {
       playerCar.accelerate();
     } else if (gameState == GameState.finished) {
@@ -321,6 +399,17 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
       gameState = GameState.racing;
       countdownTimer = 3;
       countdownComplete = false;
+      _goClearScheduled = false;
+      final controller = hudController;
+      if (controller != null) {
+        _emitHud(
+          controller.value.copyWith(
+            gameState: gameState,
+            countdownText: '3',
+            winnerText: '',
+          ),
+        );
+      }
       return KeyEventResult.handled;
     }
 
@@ -335,11 +424,13 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
         return KeyEventResult.handled;
       }
       // Gear shifting with arrow keys
-      if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      if (event is KeyDownEvent &&
+          event.logicalKey == LogicalKeyboardKey.arrowUp) {
         playerCar.shiftUp();
         return KeyEventResult.handled;
       }
-      if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      if (event is KeyDownEvent &&
+          event.logicalKey == LogicalKeyboardKey.arrowDown) {
         playerCar.shiftDown();
         return KeyEventResult.handled;
       }
@@ -360,10 +451,11 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     playerCar.reset();
     aiCar.reset();
     winner = null;
-    winnerText.text = '';
-    countdownText.text = 'TAP TO START';
+    winnerText?.text = '';
+    countdownText?.text = 'TAP TO START';
     countdownTimer = 3;
     countdownComplete = false;
+    _goClearScheduled = false;
 
     // Reset car positions
     playerCar.position.x = size.x * 0.1;
@@ -373,6 +465,22 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     for (int i = 0; i < roadMarkers.length; i++) {
       roadMarkers[i].position.x = i * (size.x / 5);
     }
+
+    final controller = hudController;
+    if (controller != null) {
+      _emitHud(
+        controller.value.copyWith(
+          gameState: gameState,
+          playerProgressPercent: 0,
+          aiProgressPercent: 0,
+          speedKmh: 0,
+          gear: playerCar.getCurrentGear(),
+          maxGears: playerCar.maxGears,
+          countdownText: 'TAP TO START',
+          winnerText: '',
+        ),
+      );
+    }
   }
 
   // Button control methods
@@ -381,6 +489,17 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
       gameState = GameState.racing;
       countdownTimer = 3;
       countdownComplete = false;
+      _goClearScheduled = false;
+      final controller = hudController;
+      if (controller != null) {
+        _emitHud(
+          controller.value.copyWith(
+            gameState: gameState,
+            countdownText: '3',
+            winnerText: '',
+          ),
+        );
+      }
     } else if (gameState == GameState.racing && countdownComplete) {
       playerCar.accelerate();
     } else if (gameState == GameState.finished) {
@@ -419,4 +538,3 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     }
   }
 }
-
