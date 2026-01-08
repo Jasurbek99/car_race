@@ -51,60 +51,61 @@ class MainMenuScreen extends StatelessWidget {
                   ),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final double carHeight = constraints.maxHeight * 0.55;
-                      return SingleChildScrollView(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            minHeight: constraints.maxHeight,
-                          ),
-                          child: Stack(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _TopBar(),
-                                  SizedBox(
-                                    height: constraints.maxHeight * 0.05,
-                                  ),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Expanded(child: SizedBox()),
-                                      SizedBox(
-                                        width: constraints.maxWidth * 0.02,
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const _TopBar(),
+                          SizedBox(height: constraints.maxHeight * 0.03),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.bottomLeft,
+                                    child: FractionallySizedBox(
+                                      heightFactor: 0.92,
+                                      widthFactor: 0.9,
+                                      alignment: Alignment.bottomLeft,
+                                      child: Image.asset(
+                                        'assets/images/main_screen/car.png',
+                                        fit: BoxFit.contain,
                                       ),
-                                      SizedBox(
-                                        width: constraints.maxWidth * 0.35,
-                                        child: _MenuButtons(
-                                          onAccount: () => Navigator.pushNamed(
-                                            context,
-                                            AccountScreen.routeName,
-                                          ),
-                                          onGoRace: () => Navigator.pushNamed(
-                                            context,
-                                            GameScreen.routeName,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: constraints.maxWidth * 0.02),
+                                Flexible(
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth: constraints.maxWidth * 0.44,
+                                      ),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.center,
+                                        child: SizedBox(
+                                          width: constraints.maxWidth * 0.44,
+                                          child: _MenuButtons(
+                                            onAccount: () =>
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  AccountScreen.routeName,
+                                                ),
+                                            onGoRace: () => Navigator.pushNamed(
+                                              context,
+                                              GameScreen.routeName,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                  const SizedBox(height: 20),
-                                ],
-                              ),
-                              // Foreground car image anchored bottom-left
-                              Positioned(
-                                left: 24,
-                                bottom: 6,
-                                child: Image.asset(
-                                  'assets/images/main_screen/car.png',
-                                  height: carHeight,
-                                  fit: BoxFit.contain,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       );
                     },
                   ),
@@ -119,6 +120,8 @@ class MainMenuScreen extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
+  const _TopBar();
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -305,12 +308,17 @@ class _NavButton extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.2,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.2,
+              ),
             ),
           ),
         ),
