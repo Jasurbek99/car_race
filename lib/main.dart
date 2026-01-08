@@ -4,12 +4,10 @@ import 'screens/account_screen.dart';
 import 'screens/game_screen.dart';
 import 'screens/main_menu_screen.dart';
 
+import 'ui/style/app_theme.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   runApp(const CarRaceApp());
 }
@@ -22,9 +20,7 @@ class CarRaceApp extends StatelessWidget {
     return MaterialApp(
       title: 'Car Race',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5C5BD6)),
-      ),
+      theme: buildAppTheme(),
       home: const MainMenuScreen(),
       routes: {
         AccountScreen.routeName: (_) => const AccountScreen(),
