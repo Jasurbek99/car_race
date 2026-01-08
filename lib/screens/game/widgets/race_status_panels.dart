@@ -13,43 +13,47 @@ class RaceStatusPanels extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: hudController,
       builder: (context, state, _) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final height = constraints.maxHeight;
+            final gap = height < 260 ? AppSpacing.m : AppSpacing.l;
+
+            return Column(
+              mainAxisSize: MainAxisSize.max,
               children: [
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 2.6,
-                    child: _HudCard(
-                      title: 'SPEED',
-                      value: '${state.speedKmh}',
-                      suffix: 'km/h',
-                    ),
+                Flexible(
+                  flex: 3,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _HudCard(
+                          title: 'SPEED',
+                          value: '${state.speedKmh}',
+                          suffix: 'km/h',
+                        ),
+                      ),
+                      SizedBox(width: gap),
+                      Expanded(
+                        child: _HudCard(
+                          title: 'GEAR',
+                          value: '${state.gear}',
+                          suffix: '/${state.maxGears}',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: AppSpacing.l),
-                Expanded(
-                  child: AspectRatio(
-                    aspectRatio: 2.6,
-                    child: _HudCard(
-                      title: 'GEAR',
-                      value: '${state.gear}',
-                      suffix: '/${state.maxGears}',
-                    ),
+                SizedBox(height: gap),
+                Flexible(
+                  flex: 4,
+                  child: _ProgressCard(
+                    playerPercent: state.playerProgressPercent,
+                    aiPercent: state.aiProgressPercent,
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: AppSpacing.l),
-            AspectRatio(
-              aspectRatio: 2.9,
-              child: _ProgressCard(
-                playerPercent: state.playerProgressPercent,
-                aiPercent: state.aiProgressPercent,
-              ),
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -133,49 +137,57 @@ class _ProgressCard extends StatelessWidget {
       context,
     ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800);
 
-    return _Panel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
+        final rowGap = height < 180 ? AppSpacing.m : AppSpacing.l;
+        final smallGap = height < 180 ? AppSpacing.xs : AppSpacing.s;
+
+        return _Panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: Text(
-                  'YOU',
-                  style: labelStyle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'YOU',
+                      style: labelStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text('$playerPercent%', style: labelStyle, maxLines: 1),
+                ],
               ),
-              Text('$playerPercent%', style: labelStyle, maxLines: 1),
+              SizedBox(height: smallGap),
+              _ProgressBar(
+                value: playerPercent / 100,
+                colors: const [Color(0xFF6C6AD9), Color(0xFF5655D6)],
+              ),
+              SizedBox(height: rowGap),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'AI',
+                      style: labelStyle?.copyWith(color: AppColors.textMuted),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text('$aiPercent%', style: labelStyle, maxLines: 1),
+                ],
+              ),
+              SizedBox(height: smallGap),
+              _ProgressBar(
+                value: aiPercent / 100,
+                colors: const [Color(0xFF444C5A), Color(0xFF2A2F39)],
+              ),
             ],
           ),
-          const SizedBox(height: AppSpacing.s),
-          _ProgressBar(
-            value: playerPercent / 100,
-            colors: const [Color(0xFF6C6AD9), Color(0xFF5655D6)],
-          ),
-          const SizedBox(height: AppSpacing.l),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'AI',
-                  style: labelStyle?.copyWith(color: AppColors.textMuted),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text('$aiPercent%', style: labelStyle, maxLines: 1),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.s),
-          _ProgressBar(
-            value: aiPercent / 100,
-            colors: const [Color(0xFF444C5A), Color(0xFF2A2F39)],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -188,33 +200,40 @@ class _ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadii.s),
-      child: SizedBox(
-        height: AppSpacing.m,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: FractionallySizedBox(
-                widthFactor: value.clamp(0, 1),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: colors),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
+        final barHeight = height < 120 ? AppSpacing.s : AppSpacing.m;
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadii.s),
+          child: SizedBox(
+            height: barHeight,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                   ),
                 ),
-              ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FractionallySizedBox(
+                    widthFactor: value.clamp(0, 1),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: colors),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -226,20 +245,30 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.panel.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(AppRadii.l),
-        border: Border.all(color: AppColors.border, width: AppBorders.regular),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: AppSpacing.xl,
-            offset: const Offset(0, AppSpacing.s),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
+        final padding = height < 120 ? AppSpacing.m : AppSpacing.l;
+
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.panel.withValues(alpha: 0.92),
+            borderRadius: BorderRadius.circular(AppRadii.l),
+            border: Border.all(
+              color: AppColors.border,
+              width: AppBorders.regular,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: AppSpacing.xl,
+                offset: const Offset(0, AppSpacing.s),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Padding(padding: const EdgeInsets.all(AppSpacing.l), child: child),
+          child: Padding(padding: EdgeInsets.all(padding), child: child),
+        );
+      },
     );
   }
 }

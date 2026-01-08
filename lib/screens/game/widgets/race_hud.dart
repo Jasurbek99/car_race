@@ -35,49 +35,35 @@ class RaceHud extends StatelessWidget {
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > constraints.maxHeight;
 
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: IgnorePointer(
-                ignoring: true,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.l),
+        return Padding(
+          padding: const EdgeInsets.all(AppSpacing.l),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              IgnorePointer(ignoring: true, child: _TopBar(onBack: onBack)),
+              const SizedBox(height: AppSpacing.l),
+              Expanded(
+                flex: isWide ? 6 : 7,
+                child: IgnorePointer(
+                  ignoring: true,
                   child: isWide
                       ? Row(
                           children: [
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  _TopBar(onBack: onBack),
-                                  const SizedBox(height: AppSpacing.l),
-                                  Expanded(
-                                    child: RaceStatusPanels(
-                                      hudController: hudController,
-                                    ),
-                                  ),
-                                ],
+                              child: RaceStatusPanels(
+                                hudController: hudController,
                               ),
                             ),
                             const SizedBox(width: AppSpacing.l),
-                            Expanded(child: SizedBox.shrink()),
+                            const Expanded(child: SizedBox.shrink()),
                           ],
                         )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _TopBar(onBack: onBack),
-                            const SizedBox(height: AppSpacing.l),
-                            RaceStatusPanels(hudController: hudController),
-                          ],
-                        ),
+                      : RaceStatusPanels(hudController: hudController),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.l),
+              const SizedBox(height: AppSpacing.l),
+              Expanded(
+                flex: isWide ? 4 : 5,
                 child: RaceControls(
                   hudController: hudController,
                   onShiftUp: onShiftUp,
@@ -88,8 +74,8 @@ class RaceHud extends StatelessWidget {
                   onGasUp: onGasUp,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -127,27 +113,32 @@ class _TopBar extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.m),
         Flexible(
-          child: Wrap(
-            alignment: WrapAlignment.end,
-            spacing: AppSpacing.s,
-            runSpacing: AppSpacing.s,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: const [
-              TokenChip(
-                iconAsset: 'assets/images/icons/coin.png',
-                value: '15145.45',
-                iconBackground: AppColors.primary,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  TokenChip(
+                    iconAsset: 'assets/images/icons/coin.png',
+                    value: '15145.45',
+                    iconBackground: AppColors.primary,
+                  ),
+                  SizedBox(width: AppSpacing.s),
+                  TokenChip(
+                    iconAsset: 'assets/images/icons/usdt.png',
+                    value: '1254.12',
+                    iconBackground: AppColors.positive,
+                  ),
+                  SizedBox(width: AppSpacing.s),
+                  BorderedIconButton(icon: Icons.settings_outlined),
+                ],
               ),
-              TokenChip(
-                iconAsset: 'assets/images/icons/usdt.png',
-                value: '1254.12',
-                iconBackground: AppColors.positive,
-              ),
-            ],
+            ),
           ),
         ),
-        const SizedBox(width: AppSpacing.s),
-        const BorderedIconButton(icon: Icons.settings_outlined),
       ],
     );
   }

@@ -29,10 +29,11 @@ class RaceControls extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final controlsHeight = height * 0.28;
+        final gap = height < 260 ? AppSpacing.m : AppSpacing.l;
+        final bannerMaxHeight = height * 0.35;
 
         return Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             ValueListenableBuilder(
               valueListenable: hudController,
@@ -41,16 +42,18 @@ class RaceControls extends StatelessWidget {
                   return const SizedBox.shrink();
                 }
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.l),
-                  child: RaceTextBanner(
-                    countdownText: state.countdownText,
-                    winnerText: state.winnerText,
+                  padding: EdgeInsets.only(bottom: gap),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: bannerMaxHeight),
+                    child: RaceTextBanner(
+                      countdownText: state.countdownText,
+                      winnerText: state.winnerText,
+                    ),
                   ),
                 );
               },
             ),
-            SizedBox(
-              height: controlsHeight,
+            Expanded(
               child: Row(
                 children: [
                   Expanded(
@@ -61,11 +64,11 @@ class RaceControls extends StatelessWidget {
                       onUp: onBrakeUp,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.l),
+                  SizedBox(width: gap),
                   Expanded(
                     child: _GearButtons(onUp: onShiftUp, onDown: onShiftDown),
                   ),
-                  const SizedBox(width: AppSpacing.l),
+                  SizedBox(width: gap),
                   Expanded(
                     child: _HoldCircleButton(
                       label: 'GAS',
@@ -92,24 +95,30 @@ class _GearButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: _TapCircleButton(
-            icon: Icons.arrow_upward,
-            color: AppColors.primary,
-            onTap: onUp,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.l),
-        Expanded(
-          child: _TapCircleButton(
-            icon: Icons.arrow_downward,
-            color: Colors.orange,
-            onTap: onDown,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gap = constraints.maxHeight < 260 ? AppSpacing.m : AppSpacing.l;
+
+        return Column(
+          children: [
+            Expanded(
+              child: _TapCircleButton(
+                icon: Icons.arrow_upward,
+                color: AppColors.primary,
+                onTap: onUp,
+              ),
+            ),
+            SizedBox(height: gap),
+            Expanded(
+              child: _TapCircleButton(
+                icon: Icons.arrow_downward,
+                color: Colors.orange,
+                onTap: onDown,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
