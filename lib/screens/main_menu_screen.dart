@@ -1,3 +1,4 @@
+import 'package:car_race/screens/garage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -258,7 +259,12 @@ class _MenuButtons extends StatelessWidget {
       children: [
         _NavButton(text: 'Shop', onTap: () {}),
         const SizedBox(height: 18),
-        _NavButton(text: 'Garage', onTap: () {}),
+        _NavButton(
+          text: 'Garage',
+          onTap: () {
+            Navigator.pushNamed(context, GarageScreen.routeName);
+          },
+        ),
         const SizedBox(height: 18),
         _NavButton(text: 'Account', onTap: onAccount),
         const SizedBox(height: 24),
