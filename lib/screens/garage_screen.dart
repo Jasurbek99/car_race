@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../ui/style/app_style.dart';
 import '../ui/widgets/bordered_icon_button.dart';
 import '../ui/widgets/token_chip.dart';
+import 'nitro_screen.dart';
 
 class GarageScreen extends StatefulWidget {
   const GarageScreen({super.key});
@@ -19,13 +20,13 @@ class _GarageScreenState extends State<GarageScreen> {
   final List<_GarageCar> _cars = const [
     _GarageCar(
       name: 'Toyota Highlinder Fortune V5',
-      imagePath: 'assets/images/main_screen/car.png',
+      imagePath: 'assets/figma_design/resources/car_from_garage.png',
       stats: [
-        _CarStat(label: 'Acceleration', value: 0.65, color: Color(0xFFFFCC00)),
+        _CarStat(label: 'Acceleration', value: 0.50, color: Color(0xFFFFCC00)),
         _CarStat(label: 'Motor', value: 1.00, color: Color(0xFF31B157)),
-        _CarStat(label: 'Power', value: 0.6, color: Color(0xFFE2514A)),
-        _CarStat(label: 'Nitro', value: 0.5, color: Color(0xFFFFCC00)),
-        _CarStat(label: 'Design', value: 0.8, color: Color(0xFF9B7BFF)),
+        _CarStat(label: 'Power', value: 0.60, color: Color(0xFFE2514A)),
+        _CarStat(label: 'Nitro', value: 0.50, color: Color(0xFFFFCC00)),
+        _CarStat(label: 'Design', value: 0.50, color: Color(0xFF9B7BFF)),
       ],
     ),
   ];
@@ -39,12 +40,19 @@ class _GarageScreenState extends State<GarageScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
+          Image.asset(
+            'assets/figma_design/resources/garage_inside_background.png',
+            fit: BoxFit.cover,
+          ),
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF0B193B), Color(0xFF090B11)],
+                colors: [
+                  Colors.black.withValues(alpha: 0.4),
+                  Colors.black.withValues(alpha: 0.6),
+                ],
               ),
             ),
           ),
@@ -54,36 +62,13 @@ class _GarageScreenState extends State<GarageScreen> {
               child: Column(
                 children: [
                   _GarageTopBar(onBack: () => Navigator.maybePop(context)),
-                  const SizedBox(height: AppSpacing.l),
+                  const SizedBox(height: AppSpacing.m),
                   Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isWide =
-                            constraints.maxWidth > constraints.maxHeight;
-                        final carPanel = _CarDisplay(
-                          car: car,
-                          onPrevious: () => _shiftCar(-1),
-                          onNext: () => _shiftCar(1),
-                        );
-                        final statsPanel = _CarStatsPanel(car: car);
-
-                        if (isWide) {
-                          return Row(
-                            children: [
-                              Expanded(child: carPanel),
-                              const SizedBox(width: AppSpacing.l),
-                              Expanded(child: statsPanel),
-                            ],
-                          );
-                        }
-                        return Column(
-                          children: [
-                            Expanded(flex: 6, child: carPanel),
-                            const SizedBox(height: AppSpacing.l),
-                            Expanded(flex: 5, child: statsPanel),
-                          ],
-                        );
-                      },
+                    child: _CarDisplaySection(
+                      car: car,
+                      onPrevious: () => _shiftCar(-1),
+                      onNext: () => _shiftCar(1),
+                      onStatTap: (stat) => _handleStatTap(stat),
                     ),
                   ),
                 ],
@@ -100,6 +85,12 @@ class _GarageScreenState extends State<GarageScreen> {
       _currentCarIndex =
           (_currentCarIndex + delta + _cars.length) % _cars.length;
     });
+  }
+
+  void _handleStatTap(_CarStat stat) {
+    if (stat.label == 'Nitro') {
+      Navigator.pushNamed(context, NitroScreen.routeName);
+    }
   }
 }
 
@@ -141,13 +132,13 @@ class _GarageTopBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TokenChip(
-                    iconAsset: 'assets/images/icons/coin.png',
+                    iconAsset: 'assets/figma_design/resources/coin_icon.png',
                     value: '15145.45',
                     iconBackground: AppColors.primary,
                   ),
                   SizedBox(width: AppSpacing.s),
                   TokenChip(
-                    iconAsset: 'assets/images/icons/usdt.png',
+                    iconAsset: 'assets/figma_design/resources/usdt_icon.png',
                     value: '1254.12',
                     iconBackground: AppColors.positive,
                   ),
@@ -163,253 +154,190 @@ class _GarageTopBar extends StatelessWidget {
   }
 }
 
-class _CarDisplay extends StatelessWidget {
+class _CarDisplaySection extends StatelessWidget {
   final _GarageCar car;
   final VoidCallback onPrevious;
   final VoidCallback onNext;
+  final void Function(_CarStat stat) onStatTap;
 
-  const _CarDisplay({
+  const _CarDisplaySection({
     required this.car,
     required this.onPrevious,
     required this.onNext,
+    required this.onStatTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.panel.withValues(alpha: 0.85),
-        borderRadius: BorderRadius.circular(AppRadii.l),
-        border: Border.all(color: AppColors.border, width: AppBorders.regular),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: AppSpacing.xl,
-            offset: const Offset(0, AppSpacing.s),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.l),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                car.name,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.l),
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final arrowSize = constraints.maxWidth * 0.12;
-                  return Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      FractionallySizedBox(
-                        widthFactor: 0.9,
-                        heightFactor: 0.9,
-                        alignment: Alignment.bottomCenter,
-                        child: Image.asset(car.imagePath, fit: BoxFit.contain),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: GestureDetector(
-                          onTap: onPrevious,
-                          child: Container(
-                            width: arrowSize,
-                            height: arrowSize,
-                            decoration: BoxDecoration(
-                              color: AppColors.panelAlt.withValues(alpha: 0.9),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.border,
-                                width: AppBorders.regular,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_back_ios_new,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: onNext,
-                          child: Container(
-                            width: arrowSize,
-                            height: arrowSize,
-                            decoration: BoxDecoration(
-                              color: AppColors.panelAlt.withValues(alpha: 0.9),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.border,
-                                width: AppBorders.regular,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CarStatsPanel extends StatelessWidget {
-  final _GarageCar car;
-
-  const _CarStatsPanel({required this.car});
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.panelAlt.withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(AppRadii.l),
-              border: Border.all(
-                color: AppColors.border,
-                width: AppBorders.regular,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  blurRadius: AppSpacing.xl,
-                  offset: const Offset(0, AppSpacing.s),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.l),
-              child: ListView.separated(
-                itemCount: car.stats.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: AppSpacing.m),
-                itemBuilder: (context, index) {
-                  final stat = car.stats[index];
-                  return _StatTile(stat: stat);
-                },
+        Align(
+          alignment: Alignment.centerLeft,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              car.name,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
           ),
-        ),
-        const SizedBox(height: AppSpacing.l),
-        SizedBox(
-          height: 56,
-          width: double.infinity,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF6C6AD9), Color(0xFF5655D6)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(AppRadii.m),
-              border: Border.all(
-                color: AppColors.border,
-                width: AppBorders.regular,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  blurRadius: AppSpacing.xl,
-                  offset: const Offset(0, AppSpacing.s),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  'Select',
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 20,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatTile extends StatelessWidget {
-  final _CarStat stat;
-
-  const _StatTile({required this.stat});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                stat.label,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.s),
-            Text(
-              '${(stat.value * 100).toInt()}%',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: stat.color,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
         ),
         const SizedBox(height: AppSpacing.xs),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadii.s),
-          child: SizedBox(
-            height: AppSpacing.m,
-            child: LinearProgressIndicator(
-              value: stat.value.clamp(0, 1),
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
-              valueColor: AlwaysStoppedAnimation<Color>(stat.color),
-            ),
+        Expanded(
+          flex: 3,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Center(
+                child: FractionallySizedBox(
+                  widthFactor: 0.65,
+                  heightFactor: 0.85,
+                  child: Image.asset(car.imagePath, fit: BoxFit.contain),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _NavArrow(
+                  icon: Icons.chevron_left,
+                  onTap: onPrevious,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: _NavArrow(
+                  icon: Icons.chevron_right,
+                  onTap: onNext,
+                ),
+              ),
+            ],
           ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Flexible(
+          flex: 1,
+          child: _StatsRow(stats: car.stats, onStatTap: onStatTap),
         ),
       ],
     );
   }
 }
+
+class _NavArrow extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _NavArrow({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Icon(
+        icon,
+        color: Colors.white.withValues(alpha: 0.9),
+        size: 48,
+      ),
+    );
+  }
+}
+
+class _StatsRow extends StatelessWidget {
+  final List<_CarStat> stats;
+  final void Function(_CarStat stat) onStatTap;
+
+  const _StatsRow({required this.stats, required this.onStatTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: stats.map((stat) {
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
+            child: GestureDetector(
+              onTap: () => onStatTap(stat),
+              child: _CircularStatGauge(stat: stat),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _CircularStatGauge extends StatefulWidget {
+  final _CarStat stat;
+
+  const _CircularStatGauge({required this.stat});
+
+  @override
+  State<_CircularStatGauge> createState() => _CircularStatGaugeState();
+}
+
+class _CircularStatGaugeState extends State<_CircularStatGauge> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableHeight = constraints.maxHeight;
+        final availableWidth = constraints.maxWidth;
+        final iconSize = (availableHeight * 0.5).clamp(25.0, 60.0);
+        final fontSize = (availableHeight * 0.14).clamp(8.0, 11.0);
+
+        return GestureDetector(
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
+          child: SizedBox(
+            width: availableWidth,
+            height: availableHeight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.stat.label,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '${(widget.stat.value * 100).toInt()}%',
+                  style: TextStyle(
+                    color: widget.stat.color,
+                    fontSize: fontSize * 0.85,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Image.asset(
+                      _isPressed
+                          ? 'assets/figma_design/resources/brake_icon_active.png'
+                          : 'assets/figma_design/resources/brake_icon.png',
+                      width: iconSize,
+                      height: iconSize,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 class _GarageCar {
   final String name;

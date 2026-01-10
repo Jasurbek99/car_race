@@ -69,6 +69,10 @@ flutter:
     - assets/images/main_screen/
     - assets/images/main_screen/car.png
     - assets/images/main_screen/
+    - assets/images/
+    - assets/images/icons/
+    - assets/figma_design/
+    - assets/figma_design/resources/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -4,7 +4,9 @@ import 'screens/account_screen.dart';
 import 'screens/game_screen.dart';
 import 'screens/garage_screen.dart';
 import 'screens/main_menu_screen.dart';
+import 'screens/nitro_screen.dart';
 import 'screens/race_mode_screen.dart';
+import 'screens/shop_screen.dart';
 
 import 'ui/style/app_theme.dart';
 
@@ -29,6 +31,8 @@ class CarRaceApp extends StatelessWidget {
         GameScreen.routeName: (_) => const GameScreen(),
         'race_mode': (_) => const RaceModeScreen(),
         GarageScreen.routeName: (_) => const GarageScreen(),
+        NitroScreen.routeName: (_) => const NitroScreen(),
+        ShopScreen.routeName: (_) => const ShopScreen(),
       },
     );
   }

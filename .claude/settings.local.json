@@ -4,7 +4,11 @@
       "Bash(flutter pub get:*)",
       "Bash(flutter analyze:*)",
       "Bash(flutter run:*)",
-      "Bash(flutter devices:*)"
+      "Bash(flutter devices:*)",
+      "mcp__figma__get_design_context",
+      "mcp__figma__get_screenshot",
+      "Bash(nc:*)",
+      "Bash(grep:*)"
     ]
   }
 }
