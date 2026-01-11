@@ -32,7 +32,7 @@ class _NitroScreenState extends State<NitroScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/figma_design/resources/garage_inside_background.png',
+            'assets/backgrounds/garage_inside_background.png',
             fit: BoxFit.cover,
           ),
           Container(
@@ -54,10 +54,8 @@ class _NitroScreenState extends State<NitroScreen> {
                 children: [
                   _NitroTopBar(
                     onBack: () => Navigator.maybePop(context),
-                    onHome: () => Navigator.popUntil(
-                      context,
-                      (route) => route.isFirst,
-                    ),
+                    onHome: () =>
+                        Navigator.popUntil(context, (route) => route.isFirst),
                   ),
                   const SizedBox(height: AppSpacing.m),
                   Expanded(
@@ -94,10 +92,7 @@ class _NitroTopBar extends StatelessWidget {
           onTap: onBack,
         ),
         const SizedBox(width: AppSpacing.s),
-        BorderedIconButton(
-          icon: Icons.home_outlined,
-          onTap: onHome,
-        ),
+        BorderedIconButton(icon: Icons.home_outlined, onTap: onHome),
         const SizedBox(width: AppSpacing.m),
         const Expanded(
           child: Align(
@@ -123,13 +118,13 @@ class _NitroTopBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TokenChip(
-                    iconAsset: 'assets/figma_design/resources/coin_icon.png',
+                    iconAsset: 'assets/icons/coin.png',
                     value: '15145.45',
                     iconBackground: AppColors.primary,
                   ),
                   SizedBox(width: AppSpacing.s),
                   TokenChip(
-                    iconAsset: 'assets/figma_design/resources/usdt_icon.png',
+                    iconAsset: 'assets/icons/usdt.png',
                     value: '1254.12',
                     iconBackground: AppColors.positive,
                   ),
@@ -179,7 +174,7 @@ class _NitroContent extends StatelessWidget {
               widthFactor: 0.55,
               heightFactor: 0.85,
               child: Image.asset(
-                'assets/figma_design/resources/car_from_garage.png',
+                'assets/full_cars/toyota.png',
                 fit: BoxFit.contain,
               ),
             ),
@@ -269,7 +264,7 @@ class _NitroLevelCard extends StatelessWidget {
                         ),
                       ),
                       Image.asset(
-                        'assets/figma_design/resources/nitro_icon.png',
+                        'assets/icons/nitro_icon.png',
                         width: gaugeSize,
                         height: gaugeSize,
                         fit: BoxFit.contain,
@@ -289,7 +284,7 @@ class _NitroLevelCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Image.asset(
-                              'assets/figma_design/resources/coin_icon.png',
+                              'assets/icons/coin.png',
                               width: fontSize,
                               height: fontSize,
                             ),
@@ -318,7 +313,6 @@ class _NitroLevelCard extends StatelessWidget {
     );
   }
 }
-
 
 class _NitroLevel {
   final int level;

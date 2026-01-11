@@ -1,9 +1,9 @@
-import 'package:car_race/screens/garage_screen.dart';
-import 'package:car_race/screens/shop_screen.dart';
+import 'package:car_race/features/account/presentation/pages/account_page.dart';
+import 'package:car_race/features/garage/presentation/pages/garage_page.dart';
+import 'package:car_race/features/shop/presentation/pages/shop_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'account_screen.dart';
 import 'game_screen.dart';
 
 class MainMenuScreen extends StatelessWidget {
@@ -92,7 +92,7 @@ class MainMenuScreen extends StatelessWidget {
                                             onAccount: () =>
                                                 Navigator.pushNamed(
                                                   context,
-                                                  AccountScreen.routeName,
+                                                  AccountPage.routeName,
                                                 ),
                                             onGoRace: () => Navigator.pushNamed(
                                               context,
@@ -183,7 +183,7 @@ class _TokenChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: background.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(18),
@@ -196,25 +196,31 @@ class _TokenChip extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: iconBackground,
-            child: Icon(icon, color: Colors.white, size: 22),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: iconBackground,
+              child: Icon(icon, color: Colors.white, size: 18),
             ),
-          ),
-          const SizedBox(width: 12),
-          const Icon(Icons.add, color: Colors.white, size: 28),
-        ],
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                value,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Icon(Icons.add, color: Colors.white, size: 22),
+          ],
+        ),
       ),
     );
   }
@@ -228,8 +234,12 @@ class _BorderedIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 70,
-      height: 70,
+      constraints: const BoxConstraints(
+        minWidth: 50,
+        maxWidth: 70,
+        minHeight: 50,
+        maxHeight: 70,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFF222447).withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(14),
@@ -242,7 +252,15 @@ class _BorderedIconButton extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(icon, color: Colors.white, size: 30),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(icon, color: Colors.white, size: 24),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -257,23 +275,24 @@ class _MenuButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         _NavButton(
           text: 'Shop',
           onTap: () {
-            Navigator.pushNamed(context, ShopScreen.routeName);
+            Navigator.pushNamed(context, ShopPage.routeName);
           },
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 12),
         _NavButton(
           text: 'Garage',
           onTap: () {
-            Navigator.pushNamed(context, GarageScreen.routeName);
+            Navigator.pushNamed(context, GaragePage.routeName);
           },
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 12),
         _NavButton(text: 'Account', onTap: onAccount),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
         _NavButton(text: 'GO RACE!', onTap: onGoRace, isPrimary: true),
       ],
     );
@@ -299,7 +318,7 @@ class _NavButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           gradient: isPrimary
               ? const LinearGradient(
@@ -327,7 +346,7 @@ class _NavButton extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontSize: 28,
+                fontSize: 22,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.2,
               ),

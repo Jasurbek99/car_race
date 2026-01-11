@@ -1,0 +1,44 @@
+{
+  "levels": [
+    {
+      "id": "1",
+      "level": 1,
+      "percentage": 10,
+      "price": null,
+      "isOwned": true,
+      "carId": "1"
+    },
+    {
+      "id": "2",
+      "level": 2,
+      "percentage": 10,
+      "price": null,
+      "isOwned": true,
+      "carId": "1"
+    },
+    {
+      "id": "3",
+      "level": 3,
+      "percentage": 10,
+      "price": 100.00,
+      "isOwned": false,
+      "carId": "1"
+    },
+    {
+      "id": "4",
+      "level": 4,
+      "percentage": 10,
+      "price": 200.00,
+      "isOwned": false,
+      "carId": "1"
+    },
+    {
+      "id": "5",
+      "level": 5,
+      "percentage": 10,
+      "price": 300.00,
+      "isOwned": false,
+      "carId": "1"
+    }
+  ]
+}

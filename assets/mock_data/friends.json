@@ -1,0 +1,39 @@
+{
+  "friends": [
+    {
+      "id": "1",
+      "name": "Alice Johnson",
+      "avatarUrl": "https://i.pravatar.cc/150?img=1",
+      "level": 25,
+      "isOnline": true
+    },
+    {
+      "id": "2",
+      "name": "Bob Smith",
+      "avatarUrl": "https://i.pravatar.cc/150?img=2",
+      "level": 18,
+      "isOnline": false
+    },
+    {
+      "id": "3",
+      "name": "Carol Williams",
+      "avatarUrl": "https://i.pravatar.cc/150?img=3",
+      "level": 32,
+      "isOnline": true
+    },
+    {
+      "id": "4",
+      "name": "David Brown",
+      "avatarUrl": "https://i.pravatar.cc/150?img=4",
+      "level": 15,
+      "isOnline": false
+    },
+    {
+      "id": "5",
+      "name": "Emma Davis",
+      "avatarUrl": "https://i.pravatar.cc/150?img=5",
+      "level": 28,
+      "isOnline": true
+    }
+  ]
+}

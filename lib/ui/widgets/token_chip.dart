@@ -35,8 +35,8 @@ class TokenChip extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.l,
-          vertical: AppSpacing.m,
+          horizontal: AppSpacing.m,
+          vertical: AppSpacing.s,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -47,24 +47,24 @@ class TokenChip extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.s),
+                padding: const EdgeInsets.all(AppSpacing.xs),
                 child: SizedBox.square(
-                  dimension: AppSpacing.l,
+                  dimension: AppSpacing.m,
                   child: Image.asset(iconAsset, fit: BoxFit.contain),
                 ),
               ),
             ),
-            const SizedBox(width: AppSpacing.m),
+            const SizedBox(width: AppSpacing.s),
             Flexible(
               child: Text(
                 value,
-                style: valueStyle,
+                style: valueStyle?.copyWith(fontSize: 14),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: AppSpacing.s),
-            const Icon(Icons.add, color: Colors.white),
+            const SizedBox(width: AppSpacing.xs),
+            const Icon(Icons.add, color: Colors.white, size: 18),
           ],
         ),
       ),

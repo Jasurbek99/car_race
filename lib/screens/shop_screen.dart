@@ -88,13 +88,13 @@ class _ShopTopBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TokenChip(
-                    iconAsset: 'assets/figma_design/resources/coin_icon.png',
+                    iconAsset: 'assets/icons/coin.png',
                     value: '15145.45',
                     iconBackground: AppColors.primary,
                   ),
                   SizedBox(width: AppSpacing.s),
                   TokenChip(
-                    iconAsset: 'assets/figma_design/resources/usdt_icon.png',
+                    iconAsset: 'assets/icons/usdt.png',
                     value: '1254.12',
                     iconBackground: AppColors.positive,
                   ),
@@ -214,7 +214,7 @@ class _BestChoiceCard extends StatelessWidget {
                   Row(
                     children: [
                       Image.asset(
-                        'assets/figma_design/resources/coin_icon.png',
+                        'assets/icons/coin.png',
                         width: fontSize * 1.2,
                         height: fontSize * 1.2,
                       ),
@@ -258,7 +258,7 @@ class _BestChoiceCard extends StatelessWidget {
                   Expanded(
                     child: Center(
                       child: Image.asset(
-                        'assets/figma_design/resources/coins.png',
+                        'assets/icons/coins.png',
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -275,7 +275,7 @@ class _BestChoiceCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/figma_design/resources/usdt_icon.png',
+                          'assets/icons/usdt.png',
                           width: fontSize,
                           height: fontSize,
                         ),
@@ -334,7 +334,7 @@ class _CoinPackageCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/figma_design/resources/coin_icon.png',
+                        'assets/icons/coin.png',
                         width: fontSize,
                         height: fontSize,
                       ),
@@ -359,7 +359,7 @@ class _CoinPackageCard extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Image.asset(
-                        'assets/figma_design/resources/coins.png',
+                        'assets/icons/coins.png',
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -376,7 +376,7 @@ class _CoinPackageCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/figma_design/resources/usdt_icon.png',
+                          'assets/icons/usdt.png',
                           width: fontSize * 0.9,
                           height: fontSize * 0.9,
                         ),

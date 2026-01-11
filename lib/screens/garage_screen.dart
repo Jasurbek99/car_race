@@ -20,7 +20,7 @@ class _GarageScreenState extends State<GarageScreen> {
   final List<_GarageCar> _cars = const [
     _GarageCar(
       name: 'Toyota Highlinder Fortune V5',
-      imagePath: 'assets/figma_design/resources/car_from_garage.png',
+      imagePath: 'assets/full_cars/toyota.png',
       stats: [
         _CarStat(label: 'Acceleration', value: 0.50, color: Color(0xFFFFCC00)),
         _CarStat(label: 'Motor', value: 1.00, color: Color(0xFF31B157)),
@@ -41,7 +41,7 @@ class _GarageScreenState extends State<GarageScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/figma_design/resources/garage_inside_background.png',
+            'assets/backgrounds/garage_inside_background.png',
             fit: BoxFit.cover,
           ),
           Container(
@@ -132,13 +132,13 @@ class _GarageTopBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TokenChip(
-                    iconAsset: 'assets/figma_design/resources/coin_icon.png',
+                    iconAsset: 'assets/icons/coin.png',
                     value: '15145.45',
                     iconBackground: AppColors.primary,
                   ),
                   SizedBox(width: AppSpacing.s),
                   TokenChip(
-                    iconAsset: 'assets/figma_design/resources/usdt_icon.png',
+                    iconAsset: 'assets/icons/usdt.png',
                     value: '1254.12',
                     iconBackground: AppColors.positive,
                   ),
@@ -199,17 +199,11 @@ class _CarDisplaySection extends StatelessWidget {
               ),
               Align(
                 alignment: Alignment.centerLeft,
-                child: _NavArrow(
-                  icon: Icons.chevron_left,
-                  onTap: onPrevious,
-                ),
+                child: _NavArrow(icon: Icons.chevron_left, onTap: onPrevious),
               ),
               Align(
                 alignment: Alignment.centerRight,
-                child: _NavArrow(
-                  icon: Icons.chevron_right,
-                  onTap: onNext,
-                ),
+                child: _NavArrow(icon: Icons.chevron_right, onTap: onNext),
               ),
             ],
           ),
@@ -234,11 +228,7 @@ class _NavArrow extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Icon(
-        icon,
-        color: Colors.white.withValues(alpha: 0.9),
-        size: 48,
-      ),
+      child: Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: 48),
     );
   }
 }
@@ -288,56 +278,53 @@ class _CircularStatGaugeState extends State<_CircularStatGauge> {
         final iconSize = (availableHeight * 0.5).clamp(25.0, 60.0);
         final fontSize = (availableHeight * 0.14).clamp(8.0, 11.0);
 
-        return GestureDetector(
-          onTapDown: (_) => setState(() => _isPressed = true),
-          onTapUp: (_) => setState(() => _isPressed = false),
-          onTapCancel: () => setState(() => _isPressed = false),
-          child: SizedBox(
-            width: availableWidth,
-            height: availableHeight,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  widget.stat.label,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+        return SizedBox(
+          width: availableWidth,
+          height: availableHeight,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.stat.label,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w600,
                 ),
-                Text(
-                  '${(widget.stat.value * 100).toInt()}%',
-                  style: TextStyle(
-                    color: widget.stat.color,
-                    fontSize: fontSize * 0.85,
-                    fontWeight: FontWeight.w700,
-                  ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                '${(widget.stat.value * 100).toInt()}%',
+                style: TextStyle(
+                  color: widget.stat.color,
+                  fontSize: fontSize * 0.85,
+                  fontWeight: FontWeight.w700,
                 ),
-                Expanded(
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, NitroScreen.routeName);
+                },
+                child: Expanded(
                   child: Center(
                     child: Image.asset(
-                      _isPressed
-                          ? 'assets/figma_design/resources/brake_icon_active.png'
-                          : 'assets/figma_design/resources/brake_icon.png',
+                      'assets/icons/brake_icon.png',
                       width: iconSize,
                       height: iconSize,
                       fit: BoxFit.contain,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
     );
   }
 }
-
 
 class _GarageCar {
   final String name;

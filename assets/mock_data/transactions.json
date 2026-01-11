@@ -1,0 +1,39 @@
+{
+  "transactions": [
+    {
+      "id": "1",
+      "type": "topUp",
+      "amount": 500.00,
+      "date": "2025-01-10T14:30:00Z",
+      "description": "Top up via USDT"
+    },
+    {
+      "id": "2",
+      "type": "race",
+      "amount": 150.00,
+      "date": "2025-01-09T18:45:00Z",
+      "description": "Race winnings"
+    },
+    {
+      "id": "3",
+      "type": "purchase",
+      "amount": -100.00,
+      "date": "2025-01-09T12:20:00Z",
+      "description": "Purchased Nitro Level 3"
+    },
+    {
+      "id": "4",
+      "type": "withdraw",
+      "amount": -200.00,
+      "date": "2025-01-08T09:15:00Z",
+      "description": "Withdraw to wallet"
+    },
+    {
+      "id": "5",
+      "type": "race",
+      "amount": 75.50,
+      "date": "2025-01-07T20:00:00Z",
+      "description": "Race winnings"
+    }
+  ]
+}
