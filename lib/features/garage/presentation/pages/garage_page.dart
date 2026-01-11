@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../screens/account/account_constants.dart';
 import '../../../../ui/style/app_style.dart';
 import '../../../../ui/widgets/bordered_icon_button.dart';
 import '../../../../ui/widgets/token_chip.dart';
 import '../../domain/entities/garage_car.dart';
 import '../providers/garage_providers.dart';
 import '../widgets/car_display_section.dart';
+import '../../../car/domain/entities/car_config.dart';
+import '../../../car/application/providers/car_selection_provider.dart';
 
 class GaragePage extends ConsumerWidget {
   const GaragePage({super.key});
@@ -24,7 +25,7 @@ class GaragePage extends ConsumerWidget {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/backgrounds/garage_inside_background.png', 
+            'assets/backgrounds/garage_inside_background.png',
             fit: BoxFit.cover,
           ),
           Container(
@@ -48,12 +49,10 @@ class GaragePage extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.m),
                   Expanded(
                     child: garageState.when(
-                      initial: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      initial: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
                       loaded: (cars) => _LoadedContent(cars: cars),
                       error: (message) => _ErrorContent(
                         message: message,
@@ -111,13 +110,13 @@ class _GarageTopBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TokenChip(
-                    iconAsset: AccountAssets.coinIcon,
+                    iconAsset: 'assets/icons/coin.png',
                     value: '15145.45',
                     iconBackground: AppColors.primary,
                   ),
                   SizedBox(width: AppSpacing.s),
                   TokenChip(
-                    iconAsset: AccountAssets.usdtIcon,
+                    iconAsset: 'assets/icons/usdt.png',
                     value: '1254.12',
                     iconBackground: AppColors.positive,
                   ),
@@ -133,17 +132,58 @@ class _GarageTopBar extends StatelessWidget {
   }
 }
 
-class _LoadedContent extends StatefulWidget {
+class _LoadedContent extends ConsumerStatefulWidget {
   final List<GarageCar> cars;
 
   const _LoadedContent({required this.cars});
 
   @override
-  State<_LoadedContent> createState() => _LoadedContentState();
+  ConsumerState<_LoadedContent> createState() => _LoadedContentState();
 }
 
-class _LoadedContentState extends State<_LoadedContent> {
+class _LoadedContentState extends ConsumerState<_LoadedContent> {
   int _currentCarIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load selected car index on init
+    _loadSelectedCarIndex();
+  }
+
+  Future<void> _loadSelectedCarIndex() async {
+    final selectedCarAsync = ref.read(carSelectionProvider);
+    selectedCarAsync.whenData((selectedConfig) {
+      // Find index of selected car in garage cars list
+      final index = widget.cars.indexWhere((car) {
+        final carConfig = _getModularConfigForCar(car.id);
+        return carConfig?.carId == selectedConfig.carId;
+      });
+      if (index != -1 && mounted) {
+        setState(() {
+          _currentCarIndex = index;
+        });
+      }
+    });
+  }
+
+  /// Map garage car IDs to modular car configs
+  CarConfig? _getModularConfigForCar(String carId) {
+    switch (carId) {
+      case '1':
+        return const CarConfig(carId: 'car_01', skinId: 'base', wheelId: 'type_1');
+      case '2':
+        return const CarConfig(carId: 'car_02', skinId: 'base', wheelId: 'type_2');
+      case '3':
+        return const CarConfig(carId: 'car_03', skinId: 'base', wheelId: 'type_3');
+      case '4':
+        return const CarConfig(carId: 'car_04', skinId: 'base', wheelId: 'type_4');
+      case '5':
+        return const CarConfig(carId: 'car_05', skinId: 'base', wheelId: 'type_5');
+      default:
+        return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +201,13 @@ class _LoadedContentState extends State<_LoadedContent> {
       _currentCarIndex =
           (_currentCarIndex + delta + widget.cars.length) % widget.cars.length;
     });
+
+    // Save selection to provider
+    final car = widget.cars[_currentCarIndex];
+    final carConfig = _getModularConfigForCar(car.id);
+    if (carConfig != null) {
+      ref.read(carSelectionProvider.notifier).selectCar(carConfig);
+    }
   }
 }
 
@@ -176,11 +223,7 @@ class _ErrorContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: AppSpacing.m),
           Text(
             'Error: $message',
@@ -188,10 +231,7 @@ class _ErrorContent extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.l),
-          ElevatedButton(
-            onPressed: onRetry,
-            child: const Text('Retry'),
-          ),
+          ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
         ],
       ),
     );
@@ -207,11 +247,7 @@ class _EmptyContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.garage_outlined,
-            size: 64,
-            color: Colors.white54,
-          ),
+          Icon(Icons.garage_outlined, size: 64, color: Colors.white54),
           SizedBox(height: AppSpacing.m),
           Text(
             'No cars in garage',

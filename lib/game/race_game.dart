@@ -4,21 +4,29 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../components/car.dart';
+import '../core/constants/hud_constants.dart';
+import '../core/utils/math_utils.dart';
+import '../features/car/domain/entities/car_config.dart';
+import 'components/modular_car_component.dart';
 
 import 'race_hud_controller.dart';
 
 enum GameState { ready, racing, finished }
 
 class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
-  RaceGame({this.hudController, this.showDebugText = false});
+  RaceGame({
+    this.hudController,
+    this.showDebugText = false,
+    this.playerCarConfig,
+  });
 
-  late Car playerCar;
-  late Car aiCar;
+  late ModularCarComponent playerCar;
+  late ModularCarComponent aiCar;
 
   GameState gameState = GameState.ready;
   final RaceHudController? hudController;
   final bool showDebugText;
+  final CarConfig? playerCarConfig;
 
   double finishLineX = 0; // Will be set in onLoad
   String? winner;
@@ -42,6 +50,10 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   // Background scroll
   double roadOffset = 0;
+
+  // For G-force calculation
+  double previousSpeed = 0;
+  double smoothedG = 0;
 
   @override
   Future<void> onLoad() async {
@@ -114,23 +126,27 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // Car sizes
     final carSize = Vector2(size.x * 0.2, size.y * 0.12);
 
-    // Player car (bottom lane) - using mini car
-    playerCar = Car(
-      carBodyPath: 'mini/car-body.png',
-      tirePath: 'mini/tire.png',
+    // Player car (bottom lane) - using selected car config or default
+    playerCar = ModularCarComponent(
+      carConfig: playerCarConfig ?? CarConfig.defaultConfig(),
       position: Vector2(size.x * 0.1, size.y * 0.65),
       size: carSize,
-      carColor: Colors.blue,
+      fallbackColor: Colors.blue,
     );
     add(playerCar);
 
-    // AI car (top lane) - using car1
-    aiCar = Car(
-      carBodyPath: 'car1/car-body.png',
-      tirePath: 'car1/tire.png',
+    debugPrint('RaceGame: Player car loaded with config: ${playerCarConfig ?? CarConfig.defaultConfig()}');
+
+    // AI car (top lane) - using modular car_02
+    aiCar = ModularCarComponent(
+      carConfig: const CarConfig(
+        carId: 'car_02',
+        skinId: 'base',
+        wheelId: 'type_2',
+      ),
       position: Vector2(size.x * 0.1, size.y * 0.48),
       size: carSize,
-      carColor: Colors.red,
+      fallbackColor: Colors.red,
     );
     add(aiCar);
 
@@ -280,6 +296,17 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
       final speedKmh = (playerCar.speed * 3.6).toInt();
       final gear = playerCar.getCurrentGear();
 
+      // Calculate RPM based on speed and gear
+      final rpm = _calculateRPM(playerCar.speed, gear);
+
+      // Calculate G-force (acceleration)
+      final accel = (playerCar.speed - previousSpeed) / dt;
+      final gForce = accel / 9.81; // Convert to G units
+      smoothedG = MathUtils.smoothDamp(smoothedG, gForce, HudConstants.gSmoothing, dt);
+      final clampedG = MathUtils.clamp(smoothedG, HudConstants.minGForce, HudConstants.maxGForce);
+
+      previousSpeed = playerCar.speed;
+
       final controller = hudController;
       if (controller != null) {
         _emitHud(
@@ -289,6 +316,8 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
             speedKmh: speedKmh,
             gear: gear,
             maxGears: playerCar.maxGears,
+            rpm: rpm,
+            accelG: clampedG,
           ),
         );
       }
@@ -457,6 +486,10 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     countdownComplete = false;
     _goClearScheduled = false;
 
+    // Reset G-force tracking
+    previousSpeed = 0;
+    smoothedG = 0;
+
     // Reset car positions
     playerCar.position.x = size.x * 0.1;
     aiCar.position.x = size.x * 0.1;
@@ -536,5 +569,21 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     if (gameState == GameState.racing && countdownComplete) {
       playerCar.shiftDown();
     }
+  }
+
+  /// Calculate RPM based on speed and gear
+  double _calculateRPM(double speed, int gear) {
+    // Convert speed (km/h) to a normalized value (0.0 to 1.0)
+    final maxSpeed = 300.0; // Assuming max speed of 300 km/h
+    final normalizedSpeed = MathUtils.clamp(speed / maxSpeed, 0.0, 1.0);
+
+    // Get gear multiplier (lower gears = higher RPM at same speed)
+    final gearMultiplier = HudConstants.gearRpmMultipliers[gear] ?? 1.0;
+
+    // Calculate RPM
+    final rpm = HudConstants.idleRpm +
+        (normalizedSpeed * (HudConstants.maxRpm - HudConstants.idleRpm) * gearMultiplier);
+
+    return MathUtils.clamp(rpm, HudConstants.idleRpm, HudConstants.maxRpm);
   }
 }

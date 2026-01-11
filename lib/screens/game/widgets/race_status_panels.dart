@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../game/race_hud_controller.dart';
 import '../../../ui/style/app_style.dart';
+import '../../../features/hud/presentation/widgets/tachometer.dart';
+import '../../../features/hud/presentation/widgets/g_meter.dart';
 
 class RaceStatusPanels extends StatelessWidget {
   final RaceHudController hudController;
@@ -19,38 +21,54 @@ class RaceStatusPanels extends StatelessWidget {
             final gap = height < 260 ? AppSpacing.m : AppSpacing.l;
 
             return Column(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
-                  flex: 3,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _HudCard(
-                          title: 'SPEED',
-                          value: '${state.speedKmh}',
-                          suffix: 'km/h',
-                        ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _HudCard(
+                        title: 'SPEED',
+                        value: '${state.speedKmh}',
+                        suffix: 'km/h',
                       ),
-                      SizedBox(width: gap),
-                      Expanded(
-                        child: _HudCard(
-                          title: 'GEAR',
-                          value: '${state.gear}',
-                          suffix: '/${state.maxGears}',
-                        ),
+                    ),
+                    SizedBox(width: gap),
+                    Expanded(
+                      child: _HudCard(
+                        title: 'GEAR',
+                        value: '${state.gear}',
+                        suffix: '/${state.maxGears}',
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: gap),
-                Flexible(
-                  flex: 4,
-                  child: _ProgressCard(
-                    playerPercent: state.playerProgressPercent,
-                    aiPercent: state.aiProgressPercent,
-                  ),
+                _ProgressCard(
+                  playerPercent: state.playerProgressPercent,
+                  aiPercent: state.aiProgressPercent,
                 ),
+                if (height > 300) ...[
+                  SizedBox(height: gap),
+                  SizedBox(
+                    height: 80,
+                    child: Row(
+                      children: [
+                        Tachometer(
+                          rpm: state.rpm,
+                          size: 70,
+                        ),
+                        SizedBox(width: gap),
+                        Expanded(
+                          child: GMeter(
+                            gForce: state.accelG,
+                            width: double.infinity,
+                            height: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             );
           },

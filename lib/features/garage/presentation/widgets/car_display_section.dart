@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../ui/style/app_style.dart';
 import '../../domain/entities/garage_car.dart';
 import '../../domain/entities/car_stat.dart';
+import '../../../car/presentation/widgets/modular_car_preview.dart';
+import '../../../car/domain/entities/car_config.dart';
 
 class CarDisplaySection extends StatelessWidget {
   final GarageCar car;
@@ -15,6 +17,43 @@ class CarDisplaySection extends StatelessWidget {
     required this.onPrevious,
     required this.onNext,
   });
+
+  /// Build car preview - uses modular system if car ID maps to modular car
+  Widget _buildCarPreview(GarageCar car) {
+    // Map garage car IDs to modular car configs
+    // This provides a migration path from old imagePath to new modular system
+    final carConfig = _getModularConfigForCar(car.id);
+
+    if (carConfig != null) {
+      return ModularCarPreview(
+        config: carConfig,
+        width: 300,
+        height: 150,
+        fit: BoxFit.contain,
+      );
+    }
+
+    // Fallback to old image-based preview
+    return Image.asset(car.imagePath, fit: BoxFit.contain);
+  }
+
+  /// Map garage car IDs to modular car configs
+  CarConfig? _getModularConfigForCar(String carId) {
+    switch (carId) {
+      case '1':
+        return const CarConfig(carId: 'car_01', skinId: 'base', wheelId: 'type_1');
+      case '2':
+        return const CarConfig(carId: 'car_02', skinId: 'base', wheelId: 'type_2');
+      case '3':
+        return const CarConfig(carId: 'car_03', skinId: 'base', wheelId: 'type_3');
+      case '4':
+        return const CarConfig(carId: 'car_04', skinId: 'base', wheelId: 'type_4');
+      case '5':
+        return const CarConfig(carId: 'car_05', skinId: 'base', wheelId: 'type_5');
+      default:
+        return null; // Use fallback image
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +82,7 @@ class CarDisplaySection extends StatelessWidget {
                 child: FractionallySizedBox(
                   widthFactor: 0.65,
                   heightFactor: 0.85,
-                  child: Image.asset(car.imagePath, fit: BoxFit.contain),
+                  child: _buildCarPreview(car),
                 ),
               ),
               Align(

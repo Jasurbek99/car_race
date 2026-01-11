@@ -8,13 +8,12 @@ import 'features/account/presentation/pages/account_page.dart';
 import 'features/garage/presentation/pages/garage_page.dart';
 import 'features/nitro/presentation/pages/nitro_page.dart';
 import 'features/shop/presentation/pages/shop_page.dart';
-import 'screens/account/account_screen.dart';
+
 import 'screens/game_screen.dart';
-import 'screens/garage_screen.dart';
 import 'screens/main_menu_screen.dart';
-import 'screens/nitro_screen.dart';
+
 import 'screens/race_mode_screen.dart';
-import 'screens/shop_screen.dart';
+
 import 'ui/style/app_theme.dart';
 
 void main() {
@@ -43,13 +42,9 @@ class CarRaceApp extends StatelessWidget {
       builder: DevicePreview.appBuilder,
       home: const MainMenuScreen(),
       routes: {
-        // Old screens (for comparison)
-        AccountScreen.routeName: (_) => const AccountScreen(),
         GameScreen.routeName: (_) => const GameScreen(),
         'race_mode': (_) => const RaceModeScreen(),
-        GarageScreen.routeName: (_) => const GarageScreen(),
-        NitroScreen.routeName: (_) => const NitroScreen(),
-        ShopScreen.routeName: (_) => const ShopScreen(),
+
         // New clean architecture pages
         AccountPage.routeName: (_) => const AccountPage(),
         GaragePage.routeName: (_) => const GaragePage(),

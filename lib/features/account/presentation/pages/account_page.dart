@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../screens/account/account_constants.dart';
+import 'account_constants.dart';
 import '../../../../ui/style/app_style.dart';
 import '../../../../ui/widgets/bordered_icon_button.dart';
 import '../../../../ui/widgets/token_chip.dart';
@@ -63,13 +63,17 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                   final isCompact =
                       constraints.maxWidth < AccountSizes.compactWidth;
                   return Padding(
-                    padding:
-                        EdgeInsets.all(isCompact ? AppSpacing.m : AppSpacing.l),
+                    padding: EdgeInsets.all(
+                      isCompact ? AppSpacing.m : AppSpacing.l,
+                    ),
                     child: Column(
                       children: [
-                        _AccountTopBar(onBack: () => Navigator.maybePop(context)),
+                        _AccountTopBar(
+                          onBack: () => Navigator.maybePop(context),
+                        ),
                         SizedBox(
-                            height: isCompact ? AppSpacing.m : AppSpacing.l),
+                          height: isCompact ? AppSpacing.m : AppSpacing.l,
+                        ),
                         Expanded(
                           child: accountState.when(
                             initial: () => const Center(
@@ -80,20 +84,20 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                             ),
                             loaded: (profile, transactions, friends) =>
                                 isCompact
-                                    ? _CompactLayout(
-                                        profile: profile,
-                                        transactions: transactions,
-                                        friends: friends,
-                                        selectedTab: _selectedTab,
-                                        onTabChanged: _onTabChanged,
-                                      )
-                                    : _WideLayout(
-                                        profile: profile,
-                                        transactions: transactions,
-                                        friends: friends,
-                                        selectedTab: _selectedTab,
-                                        onTabChanged: _onTabChanged,
-                                      ),
+                                ? _CompactLayout(
+                                    profile: profile,
+                                    transactions: transactions,
+                                    friends: friends,
+                                    selectedTab: _selectedTab,
+                                    onTabChanged: _onTabChanged,
+                                  )
+                                : _WideLayout(
+                                    profile: profile,
+                                    transactions: transactions,
+                                    friends: friends,
+                                    selectedTab: _selectedTab,
+                                    onTabChanged: _onTabChanged,
+                                  ),
                             error: (message) => _ErrorContent(
                               message: message,
                               onRetry: () => ref
@@ -200,9 +204,7 @@ class _CompactLayout extends StatelessWidget {
       children: [
         _NavRow(selectedTab: selectedTab, onTabChanged: onTabChanged),
         const SizedBox(height: AppSpacing.m),
-        Expanded(
-          child: _getContentForTab(),
-        ),
+        Expanded(child: _getContentForTab()),
       ],
     );
   }
@@ -248,12 +250,13 @@ class _WideLayout extends StatelessWidget {
       children: [
         SizedBox(
           width: 200,
-          child: _NavColumn(selectedTab: selectedTab, onTabChanged: onTabChanged),
+          child: _NavColumn(
+            selectedTab: selectedTab,
+            onTabChanged: onTabChanged,
+          ),
         ),
         const SizedBox(width: AppSpacing.l),
-        Expanded(
-          child: _getContentForTab(),
-        ),
+        Expanded(child: _getContentForTab()),
       ],
     );
   }
@@ -417,11 +420,7 @@ class _ErrorContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: AppSpacing.m),
           Text(
             'Error: $message',
@@ -429,10 +428,7 @@ class _ErrorContent extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.l),
-          ElevatedButton(
-            onPressed: onRetry,
-            child: const Text('Retry'),
-          ),
+          ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
         ],
       ),
     );

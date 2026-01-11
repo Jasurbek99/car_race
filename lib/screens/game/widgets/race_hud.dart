@@ -43,7 +43,7 @@ class RaceHud extends StatelessWidget {
               IgnorePointer(ignoring: true, child: _TopBar(onBack: onBack)),
               const SizedBox(height: AppSpacing.l),
               Expanded(
-                flex: isWide ? 6 : 7,
+                flex: isWide ? 7 : 8,
                 child: IgnorePointer(
                   ignoring: true,
                   child: isWide
@@ -63,7 +63,7 @@ class RaceHud extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.l),
               Expanded(
-                flex: isWide ? 4 : 5,
+                flex: isWide ? 3 : 4,
                 child: RaceControls(
                   hudController: hudController,
                   onShiftUp: onShiftUp,

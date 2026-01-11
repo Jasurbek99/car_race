@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../screens/account/account_constants.dart';
 import '../../../../ui/style/app_style.dart';
 import '../../../../ui/widgets/bordered_icon_button.dart';
 import '../../../../ui/widgets/token_chip.dart';
@@ -48,12 +47,10 @@ class ShopPage extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.m),
                   Expanded(
                     child: shopState.when(
-                      initial: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      initial: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
                       loaded: (packages) => _LoadedContent(packages: packages),
                       error: (message) => _ErrorContent(
                         message: message,
@@ -111,13 +108,13 @@ class _ShopTopBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TokenChip(
-                    iconAsset: AccountAssets.coinIcon,
+                    iconAsset: 'assets/icons/coin.png',
                     value: '15145.45',
                     iconBackground: AppColors.primary,
                   ),
                   SizedBox(width: AppSpacing.s),
                   TokenChip(
-                    iconAsset: AccountAssets.usdtIcon,
+                    iconAsset: 'assets/icons/usdt.png',
                     value: '1254.12',
                     iconBackground: AppColors.positive,
                   ),
@@ -152,10 +149,7 @@ class _LoadedContent extends StatelessWidget {
           children: [
             Expanded(
               flex: 2,
-              child: BestChoiceCard(
-                package: bestChoice,
-                onTap: () {},
-              ),
+              child: BestChoiceCard(package: bestChoice, onTap: () {}),
             ),
             const SizedBox(width: AppSpacing.m),
             Expanded(
@@ -230,11 +224,7 @@ class _ErrorContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: AppSpacing.m),
           Text(
             'Error: $message',
@@ -242,10 +232,7 @@ class _ErrorContent extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.l),
-          ElevatedButton(
-            onPressed: onRetry,
-            child: const Text('Retry'),
-          ),
+          ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
         ],
       ),
     );
@@ -261,11 +248,7 @@ class _EmptyContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.shopping_bag_outlined,
-            size: 64,
-            color: Colors.white54,
-          ),
+          Icon(Icons.shopping_bag_outlined, size: 64, color: Colors.white54),
           SizedBox(height: AppSpacing.m),
           Text(
             'No packages available',

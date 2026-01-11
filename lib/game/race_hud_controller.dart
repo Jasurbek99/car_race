@@ -12,6 +12,8 @@ class RaceHudState {
   final int maxGears;
   final String countdownText;
   final String winnerText;
+  final double rpm; // Engine RPM
+  final double accelG; // G-force (acceleration/braking)
 
   const RaceHudState({
     required this.gameState,
@@ -22,6 +24,8 @@ class RaceHudState {
     required this.maxGears,
     required this.countdownText,
     required this.winnerText,
+    this.rpm = 800.0, // Default idle RPM
+    this.accelG = 0.0, // Default no G-force
   });
 
   factory RaceHudState.initial() => const RaceHudState(
@@ -33,6 +37,8 @@ class RaceHudState {
     maxGears: 5,
     countdownText: 'TAP TO START',
     winnerText: '',
+    rpm: 800.0,
+    accelG: 0.0,
   );
 
   RaceHudState copyWith({
@@ -44,6 +50,8 @@ class RaceHudState {
     int? maxGears,
     String? countdownText,
     String? winnerText,
+    double? rpm,
+    double? accelG,
   }) {
     return RaceHudState(
       gameState: gameState ?? this.gameState,
@@ -55,6 +63,8 @@ class RaceHudState {
       maxGears: maxGears ?? this.maxGears,
       countdownText: countdownText ?? this.countdownText,
       winnerText: winnerText ?? this.winnerText,
+      rpm: rpm ?? this.rpm,
+      accelG: accelG ?? this.accelG,
     );
   }
 
@@ -68,7 +78,9 @@ class RaceHudState {
         other.gear == gear &&
         other.maxGears == maxGears &&
         other.countdownText == countdownText &&
-        other.winnerText == winnerText;
+        other.winnerText == winnerText &&
+        other.rpm == rpm &&
+        other.accelG == accelG;
   }
 
   @override
@@ -81,6 +93,8 @@ class RaceHudState {
     maxGears,
     countdownText,
     winnerText,
+    rpm,
+    accelG,
   );
 }
 

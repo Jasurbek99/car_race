@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../screens/account/account_constants.dart';
 import '../../../../ui/style/app_style.dart';
 import '../../../../ui/widgets/bordered_icon_button.dart';
 import '../../../../ui/widgets/token_chip.dart';
@@ -52,17 +51,17 @@ class NitroPage extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.m),
                   Expanded(
                     child: nitroState.when(
-                      initial: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      initial: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
                       loaded: (levels, selectedIndex) => _LoadedContent(
                         levels: levels,
                         selectedIndex: selectedIndex,
                         onLevelSelected: (index) {
-                          ref.read(nitroNotifierProvider.notifier).selectLevel(index);
+                          ref
+                              .read(nitroNotifierProvider.notifier)
+                              .selectLevel(index);
                         },
                       ),
                       error: (message) => _ErrorContent(
@@ -98,10 +97,7 @@ class _NitroTopBar extends StatelessWidget {
           onTap: onBack,
         ),
         const SizedBox(width: AppSpacing.s),
-        BorderedIconButton(
-          icon: Icons.home_outlined,
-          onTap: onHome,
-        ),
+        BorderedIconButton(icon: Icons.home_outlined, onTap: onHome),
         const SizedBox(width: AppSpacing.m),
         const Expanded(
           child: Align(
@@ -127,13 +123,13 @@ class _NitroTopBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TokenChip(
-                    iconAsset: AccountAssets.coinIcon,
+                    iconAsset: 'assets/icons/coin.png',
                     value: '15145.45',
                     iconBackground: AppColors.primary,
                   ),
                   SizedBox(width: AppSpacing.s),
                   TokenChip(
-                    iconAsset: AccountAssets.usdtIcon,
+                    iconAsset: 'assets/icons/usdt.png',
                     value: '1254.12',
                     iconBackground: AppColors.positive,
                   ),
@@ -172,9 +168,9 @@ class _LoadedContent extends StatelessWidget {
             child: Text(
               'Toyota Highlinder Fortune V5',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -229,11 +225,7 @@ class _ErrorContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: AppSpacing.m),
           Text(
             'Error: $message',
@@ -241,10 +233,7 @@ class _ErrorContent extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.l),
-          ElevatedButton(
-            onPressed: onRetry,
-            child: const Text('Retry'),
-          ),
+          ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
         ],
       ),
     );
@@ -260,11 +249,7 @@ class _EmptyContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.speed_outlined,
-            size: 64,
-            color: Colors.white54,
-          ),
+          Icon(Icons.speed_outlined, size: 64, color: Colors.white54),
           SizedBox(height: AppSpacing.m),
           Text(
             'No nitro levels available',
