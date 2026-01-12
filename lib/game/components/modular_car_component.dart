@@ -130,10 +130,10 @@ class ModularCarComponent extends PositionComponent {
         }
       }
 
-      // Add components in correct layering order
+      // Add components in correct layering order (body first, then wheels on top)
+      if (carBody != null) add(carBody!);
       if (rearWheel != null) add(rearWheel!);
       if (frontWheel != null) add(frontWheel!);
-      if (carBody != null) add(carBody!);
       if (helmet != null) add(helmet!);
     } catch (e) {
       // Fallback: draw a colored rectangle if sprites fail to load

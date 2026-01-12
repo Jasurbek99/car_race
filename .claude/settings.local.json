@@ -9,7 +9,8 @@
       "mcp__figma__get_screenshot",
       "Bash(nc:*)",
       "Bash(grep:*)",
-      "Bash(dart run build_runner:*)"
+      "Bash(dart run build_runner:*)",
+      "Bash(find:*)"
     ]
   }
 }

@@ -20,8 +20,10 @@ class GarageMockDataSourceImpl implements GarageMockDataSource {
       final carsJson = jsonData['cars'] as List<dynamic>;
 
       return carsJson
-          .map((carJson) =>
-              GarageCarModel.fromJson(carJson as Map<String, dynamic>))
+          .map(
+            (carJson) =>
+                GarageCarModel.fromJson(carJson as Map<String, dynamic>),
+          )
           .toList();
     } catch (e) {
       throw Exception('Failed to load garage cars: $e');

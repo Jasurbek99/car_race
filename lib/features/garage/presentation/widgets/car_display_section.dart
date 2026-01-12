@@ -10,12 +10,14 @@ class CarDisplaySection extends StatelessWidget {
   final GarageCar car;
   final VoidCallback onPrevious;
   final VoidCallback onNext;
+  final bool isSelected;
 
   const CarDisplaySection({
     super.key,
     required this.car,
     required this.onPrevious,
     required this.onNext,
+    this.isSelected = false,
   });
 
   /// Build car preview - uses modular system if car ID maps to modular car
@@ -25,11 +27,13 @@ class CarDisplaySection extends StatelessWidget {
     final carConfig = _getModularConfigForCar(car.id);
 
     if (carConfig != null) {
-      return ModularCarPreview(
-        config: carConfig,
-        width: 300,
-        height: 150,
-        fit: BoxFit.contain,
+      return Center(
+        child: ModularCarPreview(
+          config: carConfig,
+          width: 400,
+          height: 200,
+          fit: BoxFit.contain,
+        ),
       );
     }
 
@@ -41,15 +45,35 @@ class CarDisplaySection extends StatelessWidget {
   CarConfig? _getModularConfigForCar(String carId) {
     switch (carId) {
       case '1':
-        return const CarConfig(carId: 'car_01', skinId: 'base', wheelId: 'type_1');
+        return const CarConfig(
+          carId: 'car_01',
+          skinId: 'base',
+          wheelId: 'type_1',
+        );
       case '2':
-        return const CarConfig(carId: 'car_02', skinId: 'base', wheelId: 'type_2');
+        return const CarConfig(
+          carId: 'car_02',
+          skinId: 'base',
+          wheelId: 'type_2',
+        );
       case '3':
-        return const CarConfig(carId: 'car_03', skinId: 'base', wheelId: 'type_3');
+        return const CarConfig(
+          carId: 'car_03',
+          skinId: 'base',
+          wheelId: 'type_3',
+        );
       case '4':
-        return const CarConfig(carId: 'car_04', skinId: 'base', wheelId: 'type_4');
+        return const CarConfig(
+          carId: 'car_04',
+          skinId: 'base',
+          wheelId: 'type_4',
+        );
       case '5':
-        return const CarConfig(carId: 'car_05', skinId: 'base', wheelId: 'type_5');
+        return const CarConfig(
+          carId: 'car_05',
+          skinId: 'base',
+          wheelId: 'type_5',
+        );
       default:
         return null; // Use fallback image
     }
@@ -59,18 +83,76 @@ class CarDisplaySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              car.name,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
+        Row(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    car.name,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+            const SizedBox(width: AppSpacing.xs),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 150),
+              child: isSelected
+                  ? Container(
+                      key: const ValueKey('selected'),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.s,
+                        vertical: AppSpacing.xxs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      child: const Text(
+                        'SELECTED',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      key: const ValueKey('not_selected'),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.s,
+                        vertical: AppSpacing.xxs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.18),
+                        ),
+                      ),
+                      child: const Text(
+                        'Tap arrows to select',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ),
+            ),
+          ],
         ),
         const SizedBox(height: AppSpacing.xs),
         Expanded(
@@ -79,10 +161,26 @@ class CarDisplaySection extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               Center(
-                child: FractionallySizedBox(
-                  widthFactor: 0.65,
-                  heightFactor: 0.85,
-                  child: _buildCarPreview(car),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.all(AppSpacing.xxs),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    border: isSelected
+                        ? Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.7),
+                            width: 2,
+                          )
+                        : null,
+                    color: isSelected
+                        ? AppColors.primary.withValues(alpha: 0.05)
+                        : Colors.transparent,
+                  ),
+                  child: FractionallySizedBox(
+                    widthFactor: 0.95,
+                    heightFactor: 2.0,
+                    child: Center(child: _buildCarPreview(car)),
+                  ),
                 ),
               ),
               Align(

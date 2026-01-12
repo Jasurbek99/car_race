@@ -84,5 +84,6 @@ abstract final class AccountAssets {
   static const String roadBackground = 'assets/backgrounds/road.jpg';
   static const String coinIcon = 'assets/icons/coin.png';
   static const String usdtIcon = 'assets/icons/usdt.png';
-  static const String qrPlaceholder = 'assets/figma_design/resources/qr_placeholder.png';
+  static const String qrPlaceholder =
+      'assets/figma_design/resources/qr_placeholder.png';
 }

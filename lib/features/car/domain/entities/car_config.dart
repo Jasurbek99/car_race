@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:car_race/core/constants/car_constants.dart';
 
 /// Represents a complete modular car configuration
 /// This is the domain entity that describes which parts make up a car
@@ -17,17 +18,17 @@ class CarConfig extends Equatable {
 
   const CarConfig({
     required this.carId,
-    this.skinId = 'base',
-    this.wheelId = 'type_1',
+    this.skinId = CarConstants.defaultSkinId,
+    this.wheelId = CarConstants.defaultWheelId,
     this.helmetId,
   });
 
   /// Create a default car configuration
   factory CarConfig.defaultConfig() {
     return const CarConfig(
-      carId: 'car_01',
-      skinId: 'base',
-      wheelId: 'type_1',
+      carId: CarConstants.defaultCarId,
+      skinId: CarConstants.defaultSkinId,
+      wheelId: CarConstants.defaultWheelId,
     );
   }
 

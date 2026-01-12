@@ -75,8 +75,7 @@ class CarRenderSpec {
   /// Maintains aspect ratio and scales proportionally
   Size calculateWheelSize(Size renderSize) {
     // Wheel size is proportional to the car body size
-    // Assuming wheels are roughly 1/4 the width of the car
-    final wheelWidth = renderSize.width * 0.25;
+    final wheelWidth = renderSize.width * CarConstants.wheelSizeRatio;
     final wheelHeight = wheelWidth; // Wheels are square
     return Size(wheelWidth, wheelHeight);
   }
@@ -102,11 +101,15 @@ class CarRenderSpec {
         'path': wheelPath,
         'size': wheelSize,
         'offset': rearWheelPixelOffset(renderSize),
+        'sizeScale': CarConstants.rearWheelSizeScale,
+        'topAdjust': CarConstants.rearWheelTopAdjust,
       },
       'frontWheel': {
         'path': wheelPath,
         'size': wheelSize,
         'offset': frontWheelPixelOffset(renderSize),
+        'sizeScale': CarConstants.frontWheelSizeScale,
+        'topAdjust': CarConstants.frontWheelTopAdjust,
       },
       if (helmetPath != null)
         'helmet': {

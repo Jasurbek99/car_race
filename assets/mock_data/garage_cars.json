@@ -159,70 +159,7 @@
           "colorHex": "0xFF9B7BFF"
         }
       ]
-    },
-    {
-      "id": "6",
-      "name": "Pickup Offroad",
-      "imagePath": "assets/full_cars/pickup.png",
-      "stats": [
-        {
-          "label": "Acceleration",
-          "value": 0.55,
-          "colorHex": "0xFFFFCC00"
-        },
-        {
-          "label": "Motor",
-          "value": 0.75,
-          "colorHex": "0xFF31B157"
-        },
-        {
-          "label": "Power",
-          "value": 0.70,
-          "colorHex": "0xFFE2514A"
-        },
-        {
-          "label": "Nitro",
-          "value": 0.50,
-          "colorHex": "0xFFFFCC00"
-        },
-        {
-          "label": "Design",
-          "value": 0.60,
-          "colorHex": "0xFF9B7BFF"
-        }
-      ]
-    },
-    {
-      "id": "7",
-      "name": "Toyota Rally",
-      "imagePath": "assets/full_cars/toyota.png",
-      "stats": [
-        {
-          "label": "Acceleration",
-          "value": 0.78,
-          "colorHex": "0xFF31B157"
-        },
-        {
-          "label": "Motor",
-          "value": 0.80,
-          "colorHex": "0xFF31B157"
-        },
-        {
-          "label": "Power",
-          "value": 0.75,
-          "colorHex": "0xFFE2514A"
-        },
-        {
-          "label": "Nitro",
-          "value": 0.65,
-          "colorHex": "0xFFFFCC00"
-        },
-        {
-          "label": "Design",
-          "value": 0.68,
-          "colorHex": "0xFF9B7BFF"
-        }
-      ]
     }
+    
   ]
 }
