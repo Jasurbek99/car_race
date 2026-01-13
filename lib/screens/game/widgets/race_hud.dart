@@ -41,9 +41,9 @@ class RaceHud extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               IgnorePointer(ignoring: true, child: _TopBar(onBack: onBack)),
-              const SizedBox(height: AppSpacing.l),
+              const SizedBox(height: AppSpacing.s),
               Expanded(
-                flex: isWide ? 7 : 8,
+                flex: isWide ? 3 : 4,
                 child: IgnorePointer(
                   ignoring: true,
                   child: isWide
@@ -61,7 +61,7 @@ class RaceHud extends StatelessWidget {
                       : RaceStatusPanels(hudController: hudController),
                 ),
               ),
-              const SizedBox(height: AppSpacing.l),
+              const Spacer(),
               Expanded(
                 flex: isWide ? 3 : 4,
                 child: RaceControls(

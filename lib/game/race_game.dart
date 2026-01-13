@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../core/constants/hud_constants.dart';
 import '../core/utils/math_utils.dart';
 import '../features/car/domain/entities/car_config.dart';
+import '../features/car/application/services/car_render_spec.dart';
 import 'components/modular_car_component.dart';
 
 import 'race_hud_controller.dart';
@@ -55,8 +56,16 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
   double previousSpeed = 0;
   double smoothedG = 0;
 
+  // AI behavior state
+  double _aiAggressiveness = 0.75; // How aggressive the AI is (0.0 to 1.0)
+  double _aiReactionTime = 0.0; // Time until next AI decision
+  static const double _aiDecisionInterval = 0.5; // AI makes decisions every 0.5s
+
   @override
   Future<void> onLoad() async {
+    // Preload car assets before setting up the game
+    await _preloadAssets();
+
     // Set up sky background
     add(
       RectangleComponent(
@@ -123,8 +132,8 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
       );
     }
 
-    // Car sizes
-    final carSize = Vector2(size.x * 0.2, size.y * 0.12);
+    // Car sizes - MUCH larger for better visibility
+    final carSize = Vector2(size.x * 0.45, size.y * 0.25);
 
     // Player car (bottom lane) - using selected car config or default
     playerCar = ModularCarComponent(
@@ -263,13 +272,8 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
         });
       }
 
-      // AI car behavior - random acceleration
-      final random = Random();
-      if (random.nextDouble() > 0.3) {
-        aiCar.accelerate();
-      } else {
-        aiCar.brake();
-      }
+      // AI car behavior - improved competitive AI
+      _updateAIBehavior(dt);
 
       // Move cars forward based on their speed
       playerCar.position.x += playerCar.speed * dt;
@@ -490,6 +494,10 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     previousSpeed = 0;
     smoothedG = 0;
 
+    // Reset AI state
+    _aiReactionTime = 0.0;
+    _aiAggressiveness = 0.7 + (Random().nextDouble() * 0.3); // Randomize difficulty: 0.7-1.0
+
     // Reset car positions
     playerCar.position.x = size.x * 0.1;
     aiCar.position.x = size.x * 0.1;
@@ -571,6 +579,55 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
     }
   }
 
+  /// Update AI behavior with improved competitive logic
+  void _updateAIBehavior(double dt) {
+    _aiReactionTime -= dt;
+
+    if (_aiReactionTime <= 0) {
+      _aiReactionTime = _aiDecisionInterval;
+
+      // AI decision logic
+      final speedRatio = aiCar.speed / aiCar.baseMaxSpeed;
+
+      // AI tries to match player's speed with some randomness
+      final random = Random();
+      final randomFactor = 0.8 + (random.nextDouble() * 0.4); // 0.8 to 1.2
+
+      // AI accelerates if:
+      // 1. Speed is below target (player speed * aggressiveness * random)
+      // 2. Not at max speed for current gear
+      final targetSpeed =
+          (playerCar.speed * _aiAggressiveness * randomFactor).clamp(
+        0.0,
+        aiCar.baseMaxSpeed,
+      );
+
+      if (aiCar.speed < targetSpeed && speedRatio < 0.95) {
+        aiCar.accelerate();
+
+        // AI shifts up if speed is high enough in current gear
+        if (speedRatio > 0.7 && aiCar.currentGear < aiCar.maxGears) {
+          aiCar.shiftUp();
+        }
+      } else if (aiCar.speed > targetSpeed * 1.2) {
+        // Brake if going too fast
+        aiCar.activeBrake();
+      } else {
+        // Coast
+        aiCar.brake();
+      }
+
+      // Occasional gear shifting logic
+      if (random.nextDouble() < 0.3) {
+        if (speedRatio > 0.8 && aiCar.currentGear < aiCar.maxGears) {
+          aiCar.shiftUp();
+        } else if (speedRatio < 0.4 && aiCar.currentGear > 1) {
+          aiCar.shiftDown();
+        }
+      }
+    }
+  }
+
   /// Calculate RPM based on speed and gear
   double _calculateRPM(double speed, int gear) {
     // Convert speed (km/h) to a normalized value (0.0 to 1.0)
@@ -585,5 +642,53 @@ class RaceGame extends FlameGame with TapCallbacks, KeyboardEvents {
         (normalizedSpeed * (HudConstants.maxRpm - HudConstants.idleRpm) * gearMultiplier);
 
     return MathUtils.clamp(rpm, HudConstants.idleRpm, HudConstants.maxRpm);
+  }
+
+  /// Preload car assets to avoid loading delays during gameplay
+  Future<void> _preloadAssets() async {
+    debugPrint('RaceGame: Preloading assets...');
+
+    try {
+      // Preload player car assets
+      if (playerCarConfig != null) {
+        await _preloadCarAssets(playerCarConfig!);
+      }
+
+      // Preload AI car assets
+      await _preloadCarAssets(
+        const CarConfig(
+          carId: 'car_02',
+          skinId: 'base',
+          wheelId: 'type_2',
+        ),
+      );
+
+      debugPrint('RaceGame: Asset preloading complete');
+    } catch (e) {
+      debugPrint('RaceGame: Warning - some assets failed to preload: $e');
+      // Don't throw - let components handle their own loading with fallbacks
+    }
+  }
+
+  /// Preload assets for a specific car configuration
+  Future<void> _preloadCarAssets(CarConfig config) async {
+    final spec = CarRenderSpec(config);
+    final bodyPath = spec.bodyPath;
+    final wheelPath = spec.wheelPath;
+
+    try {
+      // Preload using rootBundle to verify assets exist
+      await rootBundle.load(bodyPath);
+      await rootBundle.load(wheelPath);
+
+      if (config.helmetId != null) {
+        final helmetPath = spec.helmetPath!;
+        await rootBundle.load(helmetPath);
+      }
+
+      debugPrint('RaceGame: Preloaded $bodyPath and $wheelPath');
+    } catch (e) {
+      debugPrint('RaceGame: Failed to preload assets for ${config.carId}: $e');
+    }
   }
 }

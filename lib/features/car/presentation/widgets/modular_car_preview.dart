@@ -90,7 +90,10 @@ class ModularCarPreview extends StatelessWidget {
       child: Transform.translate(
         offset: Offset(
           offset.dx - (renderSize.width / 2),
-          offset.dy - (renderSize.height / 2) + topAdjust + CarConstants.carBodyVerticalOffset,
+          offset.dy -
+              (renderSize.height / 2) +
+              topAdjust +
+              CarConstants.carBodyVerticalOffset,
         ),
         child: Image.asset(
           path,
@@ -124,7 +127,9 @@ class ModularCarPreview extends StatelessWidget {
       child: Transform.translate(
         offset: Offset(
           offset.dx - (renderSize.width / 2),
-          offset.dy - (renderSize.height / 2) + CarConstants.carBodyVerticalOffset,
+          offset.dy -
+              (renderSize.height / 2) +
+              CarConstants.carBodyVerticalOffset,
         ),
         child: Image.asset(
           path,

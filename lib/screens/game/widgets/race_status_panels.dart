@@ -108,6 +108,7 @@ class _HudCard extends StatelessWidget {
 
     return _Panel(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -116,7 +117,7 @@ class _HudCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const Spacer(),
+          const SizedBox(height: 8),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -266,21 +267,21 @@ class _Panel extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final padding = height < 120 ? AppSpacing.m : AppSpacing.l;
+        final padding = height < 120 ? AppSpacing.s : AppSpacing.m;
 
         return DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.panel.withValues(alpha: 0.92),
+            color: AppColors.panel.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(AppRadii.l),
             border: Border.all(
-              color: AppColors.border,
+              color: AppColors.border.withValues(alpha: 0.5),
               width: AppBorders.regular,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
-                blurRadius: AppSpacing.xl,
-                offset: const Offset(0, AppSpacing.s),
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: AppSpacing.m,
+                offset: const Offset(0, AppSpacing.xs),
               ),
             ],
           ),
